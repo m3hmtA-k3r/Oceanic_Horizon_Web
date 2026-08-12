@@ -1,0 +1,82 @@
+﻿@model Oceanic_Horizon_Travel.DTOs.MemberDtos.RegisterMemberDto
+
+@{
+    ViewData["Title"] = "Kayıt Ol";
+}
+
+<div class="min-h-[80vh] flex items-center justify-center py-12 px-4">
+    <div class="w-full max-w-lg">
+
+        <!-- Logo -->
+        <div class="flex items-center justify-center gap-2 mb-8">
+            <span class="w-3 h-3 rounded-full bg-teal ring-4 ring-teal/20"></span>
+            <span class="font-display font-extrabold text-2xl tracking-tight text-navy">Oceanic Horizon</span>
+        </div>
+
+        <!-- Kart -->
+        <div class="bg-white rounded-card shadow-lift border border-line p-8">
+
+            <p class="font-display text-xs font-bold uppercase tracking-[0.22em] text-teal-dark mb-2">
+                Aramıza katıl
+            </p>
+            <h1 class="font-display text-2xl font-bold text-navy mb-6">
+                Yeni Hesap Oluştur
+            </h1>
+
+            <div asp-validation-summary="All" class="text-sm text-red-600 mb-4"></div>
+
+            <form asp-action="Register" method="post" class="space-y-4">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label asp-for="FirstName" class="block text-xs font-bold uppercase tracking-wider text-muted mb-1.5">Ad</label>
+                        <input asp-for="FirstName" placeholder="Adınız"
+                               class="w-full rounded-full border border-line bg-cream/40 px-5 py-3 font-medium text-navy placeholder:text-muted/60 focus:outline-none focus:border-teal focus:bg-white transition" />
+                    </div>
+
+                    <div>
+                        <label asp-for="LastName" class="block text-xs font-bold uppercase tracking-wider text-muted mb-1.5">Soyad</label>
+                        <input asp-for="LastName" placeholder="Soyadınız"
+                               class="w-full rounded-full border border-line bg-cream/40 px-5 py-3 font-medium text-navy placeholder:text-muted/60 focus:outline-none focus:border-teal focus:bg-white transition" />
+                    </div>
+                </div>
+
+                <div>
+                    <label asp-for="Email" class="block text-xs font-bold uppercase tracking-wider text-muted mb-1.5">E-posta</label>
+                    <input asp-for="Email" type="email" placeholder="ornek@mail.com"
+                           class="w-full rounded-full border border-line bg-cream/40 px-5 py-3 font-medium text-navy placeholder:text-muted/60 focus:outline-none focus:border-teal focus:bg-white transition" />
+                </div>
+
+                <div>
+                    <label asp-for="PhoneNumber" class="block text-xs font-bold uppercase tracking-wider text-muted mb-1.5">Telefon</label>
+                    <input asp-for="PhoneNumber" placeholder="0555 555 55 55"
+                           class="w-full rounded-full border border-line bg-cream/40 px-5 py-3 font-medium text-navy placeholder:text-muted/60 focus:outline-none focus:border-teal focus:bg-white transition" />
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label asp-for="Password" class="block text-xs font-bold uppercase tracking-wider text-muted mb-1.5">Şifre</label>
+                        <input asp-for="Password" type="password" placeholder="••••••••"
+                               class="w-full rounded-full border border-line bg-cream/40 px-5 py-3 font-medium text-navy placeholder:text-muted/60 focus:outline-none focus:border-teal focus:bg-white transition" />
+                    </div>
+
+                    <div>
+                        <label asp-for="ConfirmPassword" class="block text-xs font-bold uppercase tracking-wider text-muted mb-1.5">Şifre Tekrar</label>
+                        <input asp-for="ConfirmPassword" type="password" placeholder="••••••••"
+                               class="w-full rounded-full border border-line bg-cream/40 px-5 py-3 font-medium text-navy placeholder:text-muted/60 focus:outline-none focus:border-teal focus:bg-white transition" />
+                    </div>
+                </div>
+
+                <button type="submit"
+                        class="w-full bg-teal hover:bg-teal-dark text-white font-semibold rounded-full py-3.5 transition duration-200 hover:-translate-y-0.5 hover:shadow-lift">
+                    Kayıt Ol
+                </button>
+            </form>
+        </div>
+
+        <p class="text-sm text-muted text-center mt-6">
+            Zaten hesabın var mı?
+            <a asp-action="Login" class="text-teal-dark font-semibold hover:underline">Giriş Yap</a>
+        </p>
+    </div>
+</div>

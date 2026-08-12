@@ -1,0 +1,504 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+
+
+<!-- HERO -->
+<section class="relative flex min-h-[88vh] items-center bg-cover bg-center text-white"
+         style="background-image: linear-gradient(180deg, rgba(14,42,59,.55) 0%, rgba(14,42,59,.35) 40%, rgba(14,42,59,.72) 100%), url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=2000&q=80');">
+
+    <div class="mx-auto w-full max-w-7xl px-4 py-24">
+
+        <p class="mb-3 font-display text-xs font-bold uppercase tracking-[0.22em] text-teal-light">
+            Oceanic Horizon ile keşfet
+        </p>
+
+        <h1 class="max-w-[14ch] font-display text-[clamp(2.4rem,5vw,4.1rem)] font-extrabold leading-[1.05] tracking-tight">
+            Dünyayı Keşfetmeye Hazır Mısın?
+        </h1>
+
+        <p class="mt-5 max-w-[52ch] text-[clamp(1rem,1.4vw,1.22rem)] text-white/90">
+            Avrupa'nın ikonik şehirlerinden Uzak Doğu'nun benzersiz rotalarına kadar unutulmaz deneyimler seni bekliyor.
+        </p>
+
+        <!-- ARAMA KUTUSU -->
+        <div class="mt-10 max-w-[940px] rounded-[22px] bg-white/95 p-4 shadow-lift">
+            <div class="grid grid-cols-1 items-center md:grid-cols-4">
+
+                <div class="border-line px-4 py-2 md:border-r">
+                    <label class="mb-0.5 block text-[0.7rem] font-bold uppercase tracking-[0.12em] text-muted">Destinasyon</label>
+                    <input class="w-full bg-transparent font-semibold text-navy outline-none" placeholder="Nereye gidelim?" />
+                </div>
+
+                <div class="border-line px-4 py-2 md:border-r">
+                    <label class="mb-0.5 block text-[0.7rem] font-bold uppercase tracking-[0.12em] text-muted">Tarih</label>
+                    <input type="date" class="w-full bg-transparent font-semibold text-navy outline-none" />
+                </div>
+
+                <div class="px-4 py-2">
+                    <label class="mb-0.5 block text-[0.7rem] font-bold uppercase tracking-[0.12em] text-muted">Kişi Sayısı</label>
+                    <select class="w-full bg-transparent font-semibold text-navy outline-none">
+                        <option>1 kişi</option>
+                        <option selected>2 kişi</option>
+                        <option>3 kişi</option>
+                        <option>4 kişi</option>
+                        <option>5+ kişi</option>
+                    </select>
+                </div>
+
+                <div class="p-2">
+                    <button class="w-full rounded-full bg-teal py-3.5 font-semibold text-white transition hover:bg-teal-dark">
+                        Turları Ara
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- İSTATİSTİKLER -->
+        <div class="mt-10 flex flex-wrap gap-10">
+            <div>
+                <b class="block font-display text-2xl font-bold leading-none">48+</b>
+                <span class="text-sm text-white/80">Destinasyon</span>
+            </div>
+            <div>
+                <b class="block font-display text-2xl font-bold leading-none">1.200+</b>
+                <span class="text-sm text-white/80">Rehberli Tur</span>
+            </div>
+            <div>
+                <b class="block font-display text-2xl font-bold leading-none">92.000</b>
+                <span class="text-sm text-white/80">Mutlu Gezgin</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+@{
+    // Geçici veri — Tour CRUD yapılınca @model ile değişecek, kart yapısı aynı kalacak
+    var tours = new[]
+    {
+        new { Title = "Paris & Disneyland", Country = "Fransa",             Days = "5 gün", Rating = 4.9, Reviews = 2134, Price = "38.900", Badge = "Çok satan", Img = "photo-1502602898657-3e91760cbb34" },
+        new { Title = "Roma & Toskana",     Country = "İtalya",             Days = "6 gün", Rating = 4.8, Reviews = 1687, Price = "42.500", Badge = "Popüler",   Img = "photo-1552832230-c0197dd311b5" },
+        new { Title = "Amsterdam Kanalları",Country = "Hollanda",           Days = "4 gün", Rating = 4.7, Reviews = 1203, Price = "29.900", Badge = "",          Img = "photo-1534351590666-13e3e96b5017" },
+        new { Title = "Prag & Viyana",      Country = "Çekya · Avusturya",  Days = "6 gün", Rating = 4.8, Reviews = 1421, Price = "36.400", Badge = "",          Img = "photo-1541849546-216549ae216d" },
+        new { Title = "Barselona",          Country = "İspanya",            Days = "5 gün", Rating = 4.9, Reviews = 1955, Price = "34.700", Badge = "Yeni",      Img = "photo-1583422409516-2895a77efded" },
+        new { Title = "İsviçre Alpleri",    Country = "İsviçre",            Days = "7 gün", Rating = 5.0, Reviews = 842,  Price = "58.200", Badge = "Premium",   Img = "photo-1531366936337-7c912a4589a7" }
+    };
+}
+
+<!-- TURLAR -->
+<section id="turlar" class="py-20">
+    <div class="mx-auto max-w-7xl px-4">
+
+        <div class="mb-12 flex flex-wrap items-end justify-between gap-4">
+            <div class="max-w-[640px]">
+                <p class="font-display text-xs font-bold uppercase tracking-[0.22em] text-teal-dark">Popüler rotalar</p>
+                <h2 class="mt-2 font-display text-[clamp(1.8rem,3vw,2.6rem)] font-bold tracking-tight text-navy">
+                    En Çok Tercih Edilen Turlar
+                </h2>
+                <p class="mt-2 text-muted">Gezginlerin en çok rezervasyon yaptığı, özenle planlanmış rotalar.</p>
+            </div>
+
+            <a href="#" class="hidden rounded-full bg-teal px-6 py-3 font-semibold text-white transition hover:bg-teal-dark md:inline-block">
+                Tüm turları gör
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            @foreach (var tour in tours)
+            {
+                <article class="group flex h-full flex-col overflow-hidden rounded-card border border-line bg-white shadow-soft transition duration-300 hover:-translate-y-1.5 hover:shadow-lift">
+
+                    <div class="relative h-[215px] overflow-hidden">
+                        <img src="https://images.unsplash.com/@(tour.Img)?auto=format&fit=crop&w=800&q=80"
+                             alt="@tour.Title" loading="lazy"
+                             class="h-full w-full object-cover transition duration-500 group-hover:scale-107" />
+
+                        @if (!string.IsNullOrEmpty(tour.Badge))
+                        {
+                            <span class="absolute left-3.5 top-3.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-semibold text-navy">
+                                @tour.Badge
+                            </span>
+                        }
+
+                        <button type="button" aria-label="Favorilere ekle"
+                                class="absolute right-3.5 top-3 grid h-9 w-9 place-items-center rounded-full bg-white/90 text-navy transition hover:scale-110 hover:text-teal-dark">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="flex flex-1 flex-col px-5 pb-6 pt-5">
+                        <span class="text-[0.78rem] font-semibold text-teal-dark">@tour.Country</span>
+
+                        <h3 class="mb-2 mt-1 font-display text-lg font-bold text-navy">@tour.Title</h3>
+
+                        <div class="mb-4 flex items-center gap-4 text-sm text-muted">
+                            <span>🗓️ @tour.Days</span>
+                            <span class="font-semibold text-navy">
+                                <span class="text-star">★</span> @tour.Rating
+                                <span class="font-normal text-muted">(@tour.Reviews)</span>
+                            </span>
+                        </div>
+
+                        <div class="mt-auto flex items-end justify-between border-t border-line pt-4">
+                            <div>
+                                <small class="block text-xs text-muted">Kişi başı</small>
+                                <b class="font-display text-xl text-navy">
+                                    @tour.Price <span class="text-sm font-semibold text-muted">TL</span>
+                                </b>
+                            </div>
+
+                            <button type="button" class="rounded-full bg-navy px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-dark">
+                                Turu İncele
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+@{
+    // Geçici veri — Estate CRUD yapılınca IsApproved && IsActive olan ilanlardan gelecek
+    var estates = new[]
+    {
+        new { Name = "Deniz Manzaralı Villa", City = "Santorini, Yunanistan", Type = "Villa", Capacity = 6, Rating = 4.9, Reviews = 87,  Price = "4.500", Host = "Ayşe K.",   Img = "santorini-villa" },
+        new { Name = "Tarihi Taş Konak",      City = "Alaçatı, Türkiye",      Type = "Ev",    Capacity = 4, Rating = 4.8, Reviews = 142, Price = "2.900", Host = "Mehmet B.", Img = "alacati-konak" },
+        new { Name = "Blue Palace Hotel",     City = "Bodrum, Türkiye",       Type = "Otel",  Capacity = 2, Rating = 4.7, Reviews = 315, Price = "3.200", Host = "Blue Palace", Img = "bodrum-hotel" }
+    };
+}
+
+<!-- KONAKLAMA -->
+<section id="konaklama" class="bg-white py-20">
+    <div class="mx-auto max-w-7xl px-4">
+
+        <div class="mb-12 flex flex-wrap items-end justify-between gap-4">
+            <div class="max-w-[640px]">
+                <p class="font-display text-xs font-bold uppercase tracking-[0.22em] text-teal-dark">Ev sahiplerinden</p>
+                <h2 class="mt-2 font-display text-[clamp(1.8rem,3vw,2.6rem)] font-bold tracking-tight text-navy">
+                    Öne Çıkan Konaklamalar
+                </h2>
+                <p class="mt-2 text-muted">Villalar, evler ve butik oteller — doğrudan ev sahiplerinden.</p>
+            </div>
+
+            <a href="#" class="hidden rounded-full border border-line bg-white px-6 py-3 font-semibold text-navy transition hover:border-navy md:inline-block">
+                Tüm konaklamalar
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            @foreach (var estate in estates)
+            {
+                <article class="group flex h-full flex-col overflow-hidden rounded-card border border-line bg-white shadow-soft transition duration-300 hover:-translate-y-1.5 hover:shadow-lift">
+
+                    <div class="relative h-[215px] overflow-hidden">
+                        <img src="https://picsum.photos/seed/@(estate.Img)/800/600"
+                             alt="@estate.Name" loading="lazy"
+                             class="h-full w-full object-cover transition duration-500 group-hover:scale-107" />
+
+                        <span class="absolute left-3.5 top-3.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-semibold text-navy">
+                            @estate.Type
+                        </span>
+
+                        <button type="button" aria-label="Favorilere ekle"
+                                class="absolute right-3.5 top-3 grid h-9 w-9 place-items-center rounded-full bg-white/90 text-navy transition hover:scale-110 hover:text-teal-dark">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="flex flex-1 flex-col px-5 pb-6 pt-5">
+                        <span class="text-[0.78rem] font-semibold text-teal-dark">@estate.City</span>
+
+                        <h3 class="mb-1 mt-1 font-display text-lg font-bold text-navy">@estate.Name</h3>
+
+                        <p class="mb-3 text-[0.8rem] text-muted">Ev sahibi: @estate.Host</p>
+
+                        <div class="mb-4 flex items-center gap-4 text-sm text-muted">
+                            <span>👥 @estate.Capacity misafir</span>
+                            <span class="font-semibold text-navy">
+                                <span class="text-star">★</span> @estate.Rating
+                                <span class="font-normal text-muted">(@estate.Reviews)</span>
+                            </span>
+                        </div>
+
+                        <div class="mt-auto flex items-end justify-between border-t border-line pt-4">
+                            <div>
+                                <small class="block text-xs text-muted">Gecelik</small>
+                                <b class="font-display text-xl text-navy">
+                                    @estate.Price <span class="text-sm font-semibold text-muted">TL</span>
+                                </b>
+                            </div>
+
+                            <button type="button" class="rounded-full bg-navy px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-dark">
+                                İncele
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+
+<!-- DESTINASYONLAR -->
+<section id="destinasyonlar" class="bg-navy py-20 text-white">
+    <div class="mx-auto max-w-7xl px-4">
+
+        <div class="mb-12 max-w-[640px]">
+            <p class="font-display text-xs font-bold uppercase tracking-[0.22em] text-teal-light">İlham veren şehirler</p>
+            <h2 class="mt-2 font-display text-[clamp(1.8rem,3vw,2.6rem)] font-bold tracking-tight text-white">
+                Popüler Destinasyonlar
+            </h2>
+            <p class="mt-2 text-white/70">Milyonlarca gezginin tekrar tekrar dönmek istediği rüya şehirler.</p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+
+            <!-- Büyük kart -->
+            <a href="#" class="group relative block h-[340px] overflow-hidden rounded-card shadow-lift lg:h-[704px]">
+                <img src="https://images.unsplash.com/photo-1522093007474-d86e9bf7ba6f?auto=format&fit=crop&w=1200&q=80"
+                     alt="Paris" class="h-full w-full object-cover transition duration-700 group-hover:scale-108" />
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent from-35% to-navy/85"></div>
+                <div class="absolute bottom-5 left-5 z-10">
+                    <h3 class="font-display text-2xl font-bold">Paris</h3>
+                    <span class="text-sm opacity-85">Fransa · Işıklar Şehri</span>
+                </div>
+            </a>
+
+            <!-- Sağ sütun -->
+            <div class="grid gap-6">
+
+                <a href="#" class="group relative block h-[340px] overflow-hidden rounded-card shadow-lift">
+                    <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1200&q=80"
+                         alt="Roma" class="h-full w-full object-cover transition duration-700 group-hover:scale-108" />
+                    <div class="absolute inset-0 bg-gradient-to-b from-transparent from-35% to-navy/85"></div>
+                    <div class="absolute bottom-5 left-5 z-10">
+                        <h3 class="font-display text-2xl font-bold">Roma</h3>
+                        <span class="text-sm opacity-85">İtalya · Antik Başkent</span>
+                    </div>
+                </a>
+
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+
+                    <a href="#" class="group relative block h-[340px] overflow-hidden rounded-card shadow-lift">
+                        <img src="https://images.unsplash.com/photo-1534351590666-13e3e96b5017?auto=format&fit=crop&w=900&q=80"
+                             alt="Amsterdam" class="h-full w-full object-cover transition duration-700 group-hover:scale-108" />
+                        <div class="absolute inset-0 bg-gradient-to-b from-transparent from-35% to-navy/85"></div>
+                        <div class="absolute bottom-5 left-5 z-10">
+                            <h3 class="font-display text-xl font-bold">Amsterdam</h3>
+                            <span class="text-sm opacity-85">Hollanda · Kanallar</span>
+                        </div>
+                    </a>
+
+                    <a href="#" class="group relative block h-[340px] overflow-hidden rounded-card shadow-lift">
+                        <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=900&q=80"
+                             alt="Tokyo" class="h-full w-full object-cover transition duration-700 group-hover:scale-108" />
+                        <div class="absolute inset-0 bg-gradient-to-b from-transparent from-35% to-navy/85"></div>
+                        <div class="absolute bottom-5 left-5 z-10">
+                            <h3 class="font-display text-xl font-bold">Tokyo</h3>
+                            <span class="text-sm opacity-85">Japonya · Uzak Doğu</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- NEDEN BİZ -->
+<section id="hakkimizda" class="py-20">
+    <div class="mx-auto max-w-7xl px-4">
+
+        <div class="mb-12 max-w-[640px]">
+            <p class="font-display text-xs font-bold uppercase tracking-[0.22em] text-teal-dark">Neden biz</p>
+            <h2 class="mt-2 font-display text-[clamp(1.8rem,3vw,2.6rem)] font-bold tracking-tight text-navy">
+                Neden Oceanic Horizon?
+            </h2>
+            <p class="mt-2 text-muted">Sadece bir tur değil, baştan sona düşünülmüş bir seyahat deneyimi.</p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+
+            <div class="h-full rounded-card border border-line bg-white p-8 shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-lift">
+                <div class="mb-5 grid h-[52px] w-[52px] place-items-center rounded-2xl bg-teal/12 text-teal-dark">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                    </svg>
+                </div>
+                <h4 class="font-display text-lg font-bold text-navy">Özenle Seçilmiş Rotalar</h4>
+                <p class="mt-2 text-[0.94rem] leading-relaxed text-muted">
+                    Her tur, yerel uzmanlarımız tarafından test edilmiş gerçek deneyimlerden oluşur; klişe turistik duraklar değil.
+                </p>
+            </div>
+
+            <div class="h-full rounded-card border border-line bg-white p-8 shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-lift">
+                <div class="mb-5 grid h-[52px] w-[52px] place-items-center rounded-2xl bg-teal/12 text-teal-dark">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
+                </div>
+                <h4 class="font-display text-lg font-bold text-navy">Gizli Ücret Yok</h4>
+                <p class="mt-2 text-[0.94rem] leading-relaxed text-muted">
+                    Gördüğün fiyat ödediğin fiyattır. Konaklama, ulaşım ve rehberlik tek pakette şeffaf şekilde sunulur.
+                </p>
+            </div>
+
+            <div class="h-full rounded-card border border-line bg-white p-8 shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-lift">
+                <div class="mb-5 grid h-[52px] w-[52px] place-items-center rounded-2xl bg-teal/12 text-teal-dark">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" />
+                        <line x1="6" y1="1" x2="6" y2="4" />
+                        <line x1="10" y1="1" x2="10" y2="4" />
+                        <line x1="14" y1="1" x2="14" y2="4" />
+                    </svg>
+                </div>
+                <h4 class="font-display text-lg font-bold text-navy">7/24 Yanındayız</h4>
+                <p class="mt-2 text-[0.94rem] leading-relaxed text-muted">
+                    Seyahatin boyunca Türkçe destek ekibimiz tek mesaj uzağında. Herhangi bir aksilikte anında yanındayız.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@{
+    // Geçici veri — Review CRUD yapılınca IsApproved = true olan kayıtlardan gelecek
+    var reviews = new[]
+    {
+        new { Name = "Elif Yıldız",  Tour = "Paris & Disneyland", Img = "photo-1544005313-94ddf0286df2",
+              Comment = "Paris & Disneyland turu beklentimin çok üzerindeydi. Rehberimiz gerçekten şehri yaşayan biriydi, sıradan turlarda göremeyeceğin köşelere götürdü." },
+
+        new { Name = "Mert Kaya",    Tour = "Roma & Toskana",     Img = "photo-1507003211169-0a1dd7228f2d",
+              Comment = "Roma & Toskana rotasında her şey dakikası dakikasına planlanmıştı ama hiç sıkışık hissettirmedi. Toskana'daki bağ turu tatilin en güzel anıydı." },
+
+        new { Name = "Zeynep Demir", Tour = "İsviçre Alpleri",    Img = "photo-1438761681033-6461ffad8d80",
+              Comment = "İlk kez yurt dışına çıkıyordum ve İsviçre Alpleri turunda kendimi hep güvende hissettim. Destek ekibi bir sorunumda gece yarısı bile anında yanıt verdi." }
+    };
+}
+
+<!-- YORUMLAR -->
+<section id="yorumlar" class="bg-white py-20">
+    <div class="mx-auto max-w-7xl px-4">
+
+        <div class="mb-12 max-w-[640px]">
+            <p class="font-display text-xs font-bold uppercase tracking-[0.22em] text-teal-dark">Gezgin yorumları</p>
+            <h2 class="mt-2 font-display text-[clamp(1.8rem,3vw,2.6rem)] font-bold tracking-tight text-navy">
+                Gezginler Ne Diyor?
+            </h2>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+            @foreach (var review in reviews)
+            {
+                <div class="h-full rounded-card border border-line bg-white p-7 shadow-soft">
+                    <div class="mb-3 text-star">★★★★★</div>
+
+                    <p class="leading-relaxed text-navy">@review.Comment</p>
+
+                    <div class="mt-5 flex items-center gap-3">
+                        <img src="https://images.unsplash.com/@(review.Img)?auto=format&fit=crop&w=200&q=80"
+                             alt="@review.Name" class="h-11 w-11 rounded-full object-cover" />
+                        <div>
+                            <b class="block text-[0.95rem] text-navy">@review.Name</b>
+                            <span class="text-[0.82rem] text-muted">@review.Tour</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section id="iletisim" class="py-20">
+    <div class="mx-auto max-w-7xl px-4">
+
+        <div class="relative overflow-hidden rounded-[28px] bg-cover bg-center px-8 py-[4.5rem] text-center text-white"
+             style="background-image: linear-gradient(120deg, rgba(11,127,128,.92), rgba(14,42,59,.9)), url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=2000&q=80');">
+
+            <p class="font-display text-xs font-bold uppercase tracking-[0.22em] text-teal-light">
+                Sıradaki durak sensin
+            </p>
+
+            <h2 class="mt-3 font-display text-[clamp(1.8rem,3.2vw,2.7rem)] font-extrabold tracking-tight">
+                Bir Sonraki Maceran Bir Tık Uzağında
+            </h2>
+
+            <p class="mx-auto mt-4 max-w-[52ch] text-white/90">
+                Hayalindeki rotayı seç, gerisini Oceanic Horizon'a bırak. Sınırlı kontenjanlı turlar için erken rezervasyon avantajlarını kaçırma.
+            </p>
+
+            <div class="mt-8 flex flex-wrap justify-center gap-3">
+                <a href="#turlar" class="rounded-full bg-teal px-7 py-3 font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-teal-dark">
+                    Turları Keşfet
+                </a>
+                <a href="#" class="rounded-full border-[1.5px] border-white/50 px-6 py-3 font-semibold text-white transition hover:bg-white hover:text-navy">
+                    Bize Ulaş
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- EV SAHİBİ OL -->
+<section class="bg-white py-20">
+
+    <div class="mx-auto max-w-7xl px-4">
+
+        <div class="grid grid-cols-1 items-center gap-10 overflow-hidden rounded-[28px] border border-line bg-white shadow-soft lg:grid-cols-2">
+
+            <div class="p-10 lg:p-14">
+                <p class="font-display text-xs font-bold uppercase tracking-[0.22em] text-teal-dark">Kazanmaya başla</p>
+
+                <h2 class="mt-3 font-display text-[clamp(1.7rem,2.8vw,2.4rem)] font-bold leading-tight tracking-tight text-navy">
+                    Evini Kirala,<br />Misafirlerini Ağırla
+                </h2>
+
+                <p class="mt-4 max-w-[46ch] leading-relaxed text-muted">
+                    Villanı, daireni ya da otelini Oceanic Horizon'da listele. İlanını sen yönet, takvimini sen belirle,
+                    kazancını cüzdanından anlık takip et.
+                </p>
+
+                <ul class="mt-6 space-y-3">
+                    <li class="flex items-start gap-3">
+                        <span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-teal/15 text-teal-dark">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12" /></svg>
+                        </span>
+                        <span class="text-[0.95rem] text-navy">İlan eklemek ücretsiz — komisyon sadece rezervasyon olunca</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-teal/15 text-teal-dark">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12" /></svg>
+                        </span>
+                        <span class="text-[0.95rem] text-navy">Müsaitlik takvimi ve fiyatlar tamamen senin kontrolünde</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-teal/15 text-teal-dark">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12" /></svg>
+                        </span>
+                        <span class="text-[0.95rem] text-navy">Konaklama tamamlanınca kazancın cüzdanına geçer</span>
+                    </li>
+                </ul>
+
+                <a asp-controller="Auth" asp-action="Register"
+                   class="mt-8 inline-block rounded-full bg-teal px-7 py-3.5 font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-teal-dark">
+                    Ev Sahibi Ol
+                </a>
+            </div>
+
+            <div class="h-full min-h-[340px] bg-cover bg-center lg:min-h-[520px]"
+                 style="background-image: url('https://picsum.photos/seed/host-invite/1200/900');">
+            </div>
+        </div>
+    </div>
+</section>

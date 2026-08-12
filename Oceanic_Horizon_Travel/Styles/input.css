@@ -1,0 +1,28 @@
+﻿@import "tailwindcss";
+
+@source "../Views";
+
+
+@theme {
+    /* Renkler */
+    --color-navy: #0e2a3b;
+    --color-navy-2: #12384c;
+    --color-teal: #0fa3a3;
+    --color-teal-dark: #0b7f80;
+    --color-teal-light: #7fe3e3;
+    --color-cream: #f7f5f0;
+    --color-muted: #5d7180;
+    --color-line: #e7e2d8;
+    --color-star: #f4a92c;
+    /* Fontlar */
+    --font-display: 'Sora', sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    /* Köşe yuvarlaklığı */
+    --radius-card: 18px;
+    /* Gölgeler */
+    --shadow-soft: 0 4px 18px rgba(14, 42, 59, .06);
+    --shadow-lift: 0 18px 50px rgba(14, 42, 59, .12);
+}
+
+
+
