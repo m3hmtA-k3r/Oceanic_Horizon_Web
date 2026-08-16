@@ -30,6 +30,7 @@
                         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Tur</th>
                         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Süre</th>
                         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Fiyat</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Puan</th>
                         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Çeviriler</th>
                         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Durum</th>
                         <th class="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider text-muted">İşlem</th>
@@ -39,7 +40,7 @@
                     @if (Model is null || !Model.Any())
                     {
                         <tr>
-                            <td colspan="7" class="px-6 py-12 text-center text-muted">
+                            <td colspan="8" class="px-6 py-12 text-center text-muted">
                                 Henüz tur eklenmemiş.
                             </td>
                         </tr>
@@ -58,15 +59,42 @@
                                 <td class="px-6 py-4">
                                     <p class="font-semibold text-navy">@tour.Title.Get(culture)</p>
                                     <p class="mt-0.5 text-xs text-teal-dark">/@tour.SeoUrl</p>
+                                    @if (tour.Itinerary.Any())
+                                    {
+                                        <p class="mt-0.5 text-xs text-muted">@tour.Itinerary.Count günlük program</p>
+                                    }
                                 </td>
 
                                 <td class="px-6 py-4 text-sm text-muted">
-                                    @tour.Night gece
+                                    <p>@tour.Day gün · @tour.Night gece</p>
+
+                                    @if (tour.TourDates.Any())
+                                    {
+                                        <p class="mt-0.5 text-xs text-teal-dark">@tour.TourDates.Count kalkış</p>
+                                    }
+                                    else
+                                    {
+                                        <p class="mt-0.5 text-xs font-semibold text-red-600">Kalkış tarihi yok</p>
+                                    }
                                 </td>
 
                                 <td class="px-6 py-4">
                                     <span class="font-display font-bold text-navy">@tour.BasePrice.ToString("N0")</span>
                                     <span class="text-xs font-semibold text-muted">@tour.CurrencyType</span>
+                                </td>
+
+                                <td class="px-6 py-4 text-sm">
+                                    @if (tour.ReviewCount > 0)
+                                    {
+                                        <span class="font-semibold text-navy">
+                                            <span class="text-star">★</span> @tour.Rating.ToString("0.0")
+                                        </span>
+                                        <span class="text-xs text-muted">(@tour.ReviewCount)</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-xs text-muted">—</span>
+                                    }
                                 </td>
 
                                 <td class="px-6 py-4">

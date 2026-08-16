@@ -4,7 +4,7 @@
     ViewData["Title"] = "Yeni Tur";
 }
 
-<div class="max-w-3xl">
+<div class="max-w-4xl">
 
     <div class="mb-8">
         <p class="font-display text-xs font-bold uppercase tracking-[0.22em] text-teal-dark">Yönetim · Tur</p>
@@ -18,13 +18,23 @@
 
         <form asp-action="Create" method="post" enctype="multipart/form-data" class="space-y-6">
 
-            <!-- DESTİNASYON -->
-            <div>
-                <label asp-for="DestinationId" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">Destinasyon</label>
-                <select asp-for="DestinationId" asp-items="@ViewBag.Destinations"
-                        class="w-full rounded-xl border border-line bg-cream/40 px-4 py-3 font-medium text-navy focus:border-teal focus:bg-white focus:outline-none transition">
-                    <option value="">Destinasyon seçin</option>
-                </select>
+           
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <div>
+                    <label asp-for="DestinationId" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">Destinasyon</label>
+                    <select asp-for="DestinationId" asp-items="@ViewBag.Destinations"
+                            class="w-full rounded-xl border border-line bg-cream/40 px-4 py-3 font-medium text-navy focus:border-teal focus:bg-white focus:outline-none transition">
+                        <option value="">Destinasyon seçin</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label asp-for="CategoryId" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">Kategori</label>
+                    <select asp-for="CategoryId" asp-items="@ViewBag.Categories"
+                            class="w-full rounded-xl border border-line bg-cream/40 px-4 py-3 font-medium text-navy focus:border-teal focus:bg-white focus:outline-none transition">
+                        <option value="">Kategori seçin</option>
+                    </select>
+                </div>
             </div>
 
             <!-- TUR ADI -->
@@ -34,26 +44,23 @@
                 <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div>
                         <label class="mb-1 block text-xs font-semibold text-muted">Türkçe</label>
-                        <input asp-for="Title.Tr" placeholder="Santorini Rüyası"
+                        <input asp-for="Title.Tr" placeholder="Roma & Toskana Keşfi"
                                class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none transition" />
                     </div>
-
                     <div>
                         <label class="mb-1 block text-xs font-semibold text-muted">English</label>
-                        <input asp-for="Title.En" placeholder="Santorini Dream"
+                        <input asp-for="Title.En" placeholder="Rome & Tuscany Discovery"
                                class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none transition" />
                     </div>
                 </div>
 
                 <details class="group mt-3">
                     <summary class="inline-flex cursor-pointer list-none items-center gap-1.5 text-xs font-semibold text-teal-dark hover:underline">
-                        <span class="transition group-open:rotate-90">▸</span>
-                        Português (isteğe bağlı)
+                        <span class="transition group-open:rotate-90">▸</span> Português (isteğe bağlı)
                     </summary>
-
                     <div class="mt-3">
-                        <input asp-for="Title.Pt" placeholder="Sonho de Santorini"
-                               class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none transition" />
+                        <input asp-for="Title.Pt"
+                               class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy focus:border-teal focus:outline-none transition" />
                     </div>
                 </details>
             </div>
@@ -61,14 +68,43 @@
             <!-- SEO ADRESİ -->
             <div>
                 <label asp-for="SeoUrl" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">SEO Adresi</label>
-                <input asp-for="SeoUrl" placeholder="santorini-ruyasi"
+                <input asp-for="SeoUrl" placeholder="roma-toskana-kesfi"
                        class="w-full rounded-xl border border-line bg-cream/40 px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:bg-white focus:outline-none transition" />
-                <p class="mt-1.5 text-xs text-muted">Sadece küçük harf, rakam ve tire. Tüm dillerde aynı adres kullanılır.</p>
+                <p class="mt-1.5 text-xs text-muted">Sadece küçük harf, rakam ve tire. Tüm dillerde aynı.</p>
             </div>
 
-            <!-- AÇIKLAMA -->
+            <!-- KISA AÇIKLAMA -->
             <div class="rounded-xl border border-line bg-cream/30 p-5">
-                <p class="mb-3 text-xs font-bold uppercase tracking-wider text-teal-dark">Açıklama</p>
+                <p class="mb-3 text-xs font-bold uppercase tracking-wider text-teal-dark">Kısa Açıklama</p>
+                <p class="mb-3 text-xs text-muted">Tur kartlarında görünür. En fazla 200 karakter.</p>
+
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div>
+                        <label class="mb-1 block text-xs font-semibold text-muted">Türkçe</label>
+                        <textarea asp-for="ShortDescription.Tr" rows="2"
+                                  class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy focus:border-teal focus:outline-none transition"></textarea>
+                    </div>
+                    <div>
+                        <label class="mb-1 block text-xs font-semibold text-muted">English</label>
+                        <textarea asp-for="ShortDescription.En" rows="2"
+                                  class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy focus:border-teal focus:outline-none transition"></textarea>
+                    </div>
+                </div>
+
+                <details class="group mt-3">
+                    <summary class="inline-flex cursor-pointer list-none items-center gap-1.5 text-xs font-semibold text-teal-dark hover:underline">
+                        <span class="transition group-open:rotate-90">▸</span> Português (isteğe bağlı)
+                    </summary>
+                    <div class="mt-3">
+                        <textarea asp-for="ShortDescription.Pt" rows="2"
+                                  class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy focus:border-teal focus:outline-none transition"></textarea>
+                    </div>
+                </details>
+            </div>
+
+            <!-- TUR AÇIKLAMASI -->
+            <div class="rounded-xl border border-line bg-cream/30 p-5">
+                <p class="mb-3 text-xs font-bold uppercase tracking-wider text-teal-dark">Tur Açıklaması</p>
 
                 <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div>
@@ -76,20 +112,17 @@
                         <textarea asp-for="Description.Tr" rows="6" placeholder="Turun konsepti, deneyimi ve önemli detayları..."
                                   class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none transition"></textarea>
                     </div>
-
                     <div>
                         <label class="mb-1 block text-xs font-semibold text-muted">English</label>
-                        <textarea asp-for="Description.En" rows="6" placeholder="Tour concept, experience and key details..."
-                                  class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none transition"></textarea>
+                        <textarea asp-for="Description.En" rows="6"
+                                  class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy focus:border-teal focus:outline-none transition"></textarea>
                     </div>
                 </div>
 
                 <details class="group mt-3">
                     <summary class="inline-flex cursor-pointer list-none items-center gap-1.5 text-xs font-semibold text-teal-dark hover:underline">
-                        <span class="transition group-open:rotate-90">▸</span>
-                        Português (isteğe bağlı)
+                        <span class="transition group-open:rotate-90">▸</span> Português (isteğe bağlı)
                     </summary>
-
                     <div class="mt-3">
                         <textarea asp-for="Description.Pt" rows="6"
                                   class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy focus:border-teal focus:outline-none transition"></textarea>
@@ -97,20 +130,61 @@
                 </details>
             </div>
 
-            <!-- SÜRE VE FİYAT -->
-            <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
-                <div>
-                    <label asp-for="Night" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">Gece Sayısı</label>
-                    <input asp-for="Night" type="number" min="1" max="60" placeholder="5"
-                           class="w-full rounded-xl border border-line bg-cream/40 px-4 py-3 font-medium text-navy focus:border-teal focus:bg-white focus:outline-none transition" />
-                </div>
+            <!-- TUR ROTASI -->
+            <div class="rounded-xl border border-line bg-cream/30 p-5">
+                <p class="mb-3 text-xs font-bold uppercase tracking-wider text-teal-dark">Tur Rotası <span class="font-normal normal-case text-muted">(isteğe bağlı)</span></p>
 
                 <div>
-                    <label asp-for="BasePrice" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">Başlangıç Fiyatı</label>
-                    <input asp-for="BasePrice" type="number" step="0.01" min="0" placeholder="38900"
-                           class="w-full rounded-xl border border-line bg-cream/40 px-4 py-3 font-medium text-navy focus:border-teal focus:bg-white focus:outline-none transition" />
+                    <label class="mb-1 block text-xs font-semibold text-muted">Türkçe</label>
+                    <input asp-for="Route.Tr" placeholder="Roma · Vatikan · Floransa · Pisa · Toskana"
+                           class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none transition" />
                 </div>
 
+                <details class="group mt-3">
+                    <summary class="inline-flex cursor-pointer list-none items-center gap-1.5 text-xs font-semibold text-teal-dark hover:underline">
+                        <span class="transition group-open:rotate-90">▸</span> Diğer diller
+                    </summary>
+                    <div class="mt-3 space-y-3">
+                        <input asp-for="Route.En" placeholder="Rome · Vatican · Florence · Pisa"
+                               class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none transition" />
+                        <input asp-for="Route.Pt"
+                               class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy focus:border-teal focus:outline-none transition" />
+                    </div>
+                </details>
+            </div>
+
+            <!-- SÜRE VE KAPASİTE -->
+            <div class="grid grid-cols-2 gap-5 sm:grid-cols-4">
+                <div>
+                    <label asp-for="Day" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">Gün</label>
+                    <input asp-for="Day" type="number" min="1" max="60" placeholder="7"
+                           class="w-full rounded-xl border border-line bg-cream/40 px-4 py-3 font-medium text-navy focus:border-teal focus:bg-white focus:outline-none transition" />
+                </div>
+                <div>
+                    <label asp-for="Night" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">Gece</label>
+                    <input asp-for="Night" type="number" min="0" max="60" placeholder="6"
+                           class="w-full rounded-xl border border-line bg-cream/40 px-4 py-3 font-medium text-navy focus:border-teal focus:bg-white focus:outline-none transition" />
+                </div>
+                <div>
+                    <label asp-for="MaxCapacity" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">Maks. Kontenjan</label>
+                    <input asp-for="MaxCapacity" type="number" min="1" max="500" placeholder="20"
+                           class="w-full rounded-xl border border-line bg-cream/40 px-4 py-3 font-medium text-navy focus:border-teal focus:bg-white focus:outline-none transition" />
+                </div>
+                <div>
+                    <label asp-for="MinParticipant" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">Min. Katılımcı</label>
+                    <input asp-for="MinParticipant" type="number" min="0" placeholder="8"
+                           class="w-full rounded-xl border border-line bg-cream/40 px-4 py-3 font-medium text-navy focus:border-teal focus:bg-white focus:outline-none transition" />
+                </div>
+            </div>
+
+            <!-- FİYAT -->
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <div>
+                    <label asp-for="BasePrice" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">Kişi Başı Fiyat</label>
+                    <input asp-for="BasePrice" type="number" step="0.01" min="0" placeholder="42500"
+                           class="w-full rounded-xl border border-line bg-cream/40 px-4 py-3 font-medium text-navy focus:border-teal focus:bg-white focus:outline-none transition" />
+                    <p class="mt-1.5 text-xs text-muted">"Başlayan fiyatlarla" olarak gösterilir.</p>
+                </div>
                 <div>
                     <label asp-for="CurrencyType" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">Para Birimi</label>
                     <select asp-for="CurrencyType"
@@ -123,14 +197,148 @@
                 </div>
             </div>
 
-            <!-- GÖRSEL -->
+            <!-- TUR DETAYLARI -->
+            <details class="group rounded-xl border border-line bg-cream/30 p-5">
+                <summary class="cursor-pointer list-none">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-teal-dark">
+                        <span class="transition group-open:rotate-90">▸</span>
+                        Tur Detayları
+                        <span class="font-normal normal-case text-muted">— tip, ulaşım, konaklama, rehber, vize (isteğe bağlı)</span>
+                    </span>
+                </summary>
+
+                <div class="mt-5 space-y-5">
+                    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                        <div>
+                            <label asp-for="TourType" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">Tur Tipi</label>
+                            <select asp-for="TourType"
+                                    class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy focus:border-teal focus:outline-none transition">
+                                <option value="">Seçin</option>
+                                <option value="Yurt İçi">Yurt İçi</option>
+                                <option value="Yurt Dışı">Yurt Dışı</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label asp-for="GuideLanguage" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">Rehber Dili</label>
+                            <input asp-for="GuideLanguage" placeholder="Türkçe"
+                                   class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none transition" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">Başlangıç Şehri</label>
+                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                            <input asp-for="StartCity.Tr" placeholder="İstanbul (TR)"
+                                   class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none transition" />
+                            <input asp-for="StartCity.En" placeholder="Istanbul (EN)"
+                                   class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none transition" />
+                            <input asp-for="StartCity.Pt" placeholder="(PT)"
+                                   class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none transition" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">Ulaşım</label>
+                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                            <input asp-for="Transportation.Tr" placeholder="Uçak · Transfer (TR)"
+                                   class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none transition" />
+                            <input asp-for="Transportation.En" placeholder="(EN)"
+                                   class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none transition" />
+                            <input asp-for="Transportation.Pt" placeholder="(PT)"
+                                   class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none transition" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">Konaklama</label>
+                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                            <input asp-for="Accommodation.Tr" placeholder="4 Yıldızlı Oteller (TR)"
+                                   class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none transition" />
+                            <input asp-for="Accommodation.En" placeholder="(EN)"
+                                   class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none transition" />
+                            <input asp-for="Accommodation.Pt" placeholder="(PT)"
+                                   class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none transition" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">Vize Bilgisi</label>
+                        <div class="space-y-3">
+                            <input asp-for="VisaInfo.Tr" placeholder="Schengen vizesi gereklidir (TR)"
+                                   class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none transition" />
+                            <input asp-for="VisaInfo.En" placeholder="(EN)"
+                                   class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none transition" />
+                            <input asp-for="VisaInfo.Pt" placeholder="(PT)"
+                                   class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none transition" />
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- TUR TARİHLERİ -->
+            <div class="rounded-xl border border-line bg-cream/30 p-5">
+                <div class="mb-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-teal-dark">Tur Tarihleri</p>
+                        <p class="mt-1 text-xs text-muted">Her kalkışın kendi kontenjanı ve fiyatı olur.</p>
+                    </div>
+                    <button type="button" onclick="addTourDate()"
+                            class="rounded-full bg-navy px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-dark">
+                        + Tarih Ekle
+                    </button>
+                </div>
+
+                <div id="tourDatesContainer" class="space-y-3"></div>
+            </div>
+
+            <!-- GÜN GÜN PROGRAM  -->
+            <div class="rounded-xl border border-line bg-cream/30 p-5">
+                <div class="mb-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-teal-dark">Gün Gün Program</p>
+                        <p class="mt-1 text-xs text-muted">Tur detayında accordion olarak gösterilir.</p>
+                    </div>
+                    <button type="button" onclick="addItineraryDay()"
+                            class="rounded-full bg-navy px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-dark">
+                        + Gün Ekle
+                    </button>
+                </div>
+
+                <div id="itineraryContainer" class="space-y-3"></div>
+            </div>
+
+            <!-- ÖNE ÇIKAN ÖZELLİKLER -->
+            <div class="rounded-xl border border-line bg-cream/30 p-5">
+                <div class="mb-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-teal-dark">Öne Çıkan Özellikler</p>
+                        <p class="mt-1 text-xs text-muted">Tur kartında ikonlarla gösterilir.</p>
+                    </div>
+                    <button type="button" onclick="addAmenity()"
+                            class="rounded-full bg-navy px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-dark">
+                        + Özellik Ekle
+                    </button>
+                </div>
+
+                <div id="amenitiesContainer" class="space-y-3"></div>
+            </div>
+
+           
             <div>
                 <label asp-for="ImageFile" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">Kapak Görseli</label>
                 <input asp-for="ImageFile" type="file" accept="image/*"
                        class="w-full rounded-xl border border-line bg-cream/40 px-4 py-3 text-sm text-navy file:mr-4 file:rounded-full file:border-0 file:bg-teal file:px-5 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-teal-dark focus:border-teal focus:bg-white focus:outline-none transition" />
             </div>
 
-            <!-- DURUM -->
+           
+            <div>
+                <label asp-for="GalleryFiles" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">Galeri Görselleri</label>
+                <input asp-for="GalleryFiles" type="file" accept="image/*" multiple
+                       class="w-full rounded-xl border border-line bg-cream/40 px-4 py-3 text-sm text-navy file:mr-4 file:rounded-full file:border-0 file:bg-teal file:px-5 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-teal-dark focus:border-teal focus:bg-white focus:outline-none transition" />
+                <p class="mt-1.5 text-xs text-muted">Birden fazla seçebilirsin. Ctrl tuşuyla çoklu seçim.</p>
+            </div>
+
+            
             <div class="space-y-3 border-t border-line pt-5">
                 <label class="flex cursor-pointer items-center gap-3">
                     <input asp-for="IsActive" type="checkbox" class="h-5 w-5 rounded border-line text-teal focus:ring-teal" />
@@ -143,7 +351,6 @@
                 </label>
             </div>
 
-            <!-- BUTONLAR -->
             <div class="flex gap-3 border-t border-line pt-5">
                 <button type="submit" class="rounded-full bg-teal px-7 py-3 font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-teal-dark">
                     Kaydet
@@ -155,3 +362,130 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // ── TUR TARİHLERİ ──
+        function addTourDate() {
+            const c = document.getElementById('tourDatesContainer');
+            const i = c.children.length;
+
+            const row = document.createElement('div');
+            row.className = 'row-item rounded-xl border border-line bg-white p-4';
+            row.innerHTML = `
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-5">
+                    <div>
+                        <label class="mb-1 block text-xs font-semibold text-muted">Başlangıç</label>
+                        <input name="TourDates[${i}].StartDate" type="date"
+                               class="w-full rounded-lg border border-line px-3 py-2 text-sm text-navy focus:border-teal focus:outline-none" />
+                    </div>
+                    <div>
+                        <label class="mb-1 block text-xs font-semibold text-muted">Bitiş</label>
+                        <input name="TourDates[${i}].EndDate" type="date"
+                               class="w-full rounded-lg border border-line px-3 py-2 text-sm text-navy focus:border-teal focus:outline-none" />
+                    </div>
+                    <div>
+                        <label class="mb-1 block text-xs font-semibold text-muted">Kontenjan</label>
+                        <input name="TourDates[${i}].Quota" type="number" min="1" value="20"
+                               class="w-full rounded-lg border border-line px-3 py-2 text-sm text-navy focus:border-teal focus:outline-none" />
+                    </div>
+                    <div>
+                        <label class="mb-1 block text-xs font-semibold text-muted">Fiyat</label>
+                        <input name="TourDates[${i}].Price" type="number" step="0.01" min="0"
+                               class="w-full rounded-lg border border-line px-3 py-2 text-sm text-navy focus:border-teal focus:outline-none" />
+                    </div>
+                    <div class="flex items-end gap-2">
+                        <div class="flex-1">
+                            <label class="mb-1 block text-xs font-semibold text-muted">Durum</label>
+                            <select name="TourDates[${i}].Status"
+                                    class="w-full rounded-lg border border-line px-3 py-2 text-sm text-navy focus:border-teal focus:outline-none">
+                                <option value="Açık">Açık</option>
+                                <option value="Doldu">Doldu</option>
+                                <option value="İptal">İptal</option>
+                            </select>
+                        </div>
+                        <button type="button" onclick="removeRow(this, 'tourDatesContainer')"
+                                class="rounded-lg border border-line px-3 py-2 text-sm font-semibold text-red-600 hover:border-red-600">
+                            ✕
+                        </button>
+                    </div>
+                </div>`;
+            c.appendChild(row);
+        }
+
+        // ── GÜN GÜN PROGRAM ──
+        function addItineraryDay() {
+            const c = document.getElementById('itineraryContainer');
+            const i = c.children.length;
+
+            const row = document.createElement('div');
+            row.className = 'row-item rounded-xl border border-line bg-white p-4';
+            row.innerHTML = `
+                <div class="mb-3 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs font-semibold text-muted">Gün</label>
+                        <input name="Itinerary[${i}].DayNumber" type="number" min="1" value="${i + 1}"
+                               class="w-16 rounded-lg border border-line px-2 py-1 text-sm font-bold text-navy focus:border-teal focus:outline-none" />
+                    </div>
+                    <button type="button" onclick="removeRow(this, 'itineraryContainer')"
+                            class="rounded-lg border border-line px-3 py-1 text-sm font-semibold text-red-600 hover:border-red-600">
+                        ✕
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <input name="Itinerary[${i}].Title.Tr" placeholder="Başlık (TR) — İstanbul → Roma"
+                           class="w-full rounded-lg border border-line px-3 py-2 text-sm text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none" />
+                    <input name="Itinerary[${i}].Title.En" placeholder="Title (EN)"
+                           class="w-full rounded-lg border border-line px-3 py-2 text-sm text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none" />
+
+                    <textarea name="Itinerary[${i}].Description.Tr" rows="3" placeholder="Açıklama (TR)"
+                              class="w-full rounded-lg border border-line px-3 py-2 text-sm text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none"></textarea>
+                    <textarea name="Itinerary[${i}].Description.En" rows="3" placeholder="Description (EN)"
+                              class="w-full rounded-lg border border-line px-3 py-2 text-sm text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none"></textarea>
+
+                    <input name="Itinerary[${i}].City.Tr" placeholder="Şehir (TR)"
+                           class="w-full rounded-lg border border-line px-3 py-2 text-sm text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none" />
+                    <input name="Itinerary[${i}].City.En" placeholder="City (EN)"
+                           class="w-full rounded-lg border border-line px-3 py-2 text-sm text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none" />
+
+                    <input name="Itinerary[${i}].Transportation.Tr" placeholder="Ulaşım (TR) — isteğe bağlı"
+                           class="w-full rounded-lg border border-line px-3 py-2 text-sm text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none" />
+                    <input name="Itinerary[${i}].Meals.Tr" placeholder="Yemekler (TR) — isteğe bağlı"
+                           class="w-full rounded-lg border border-line px-3 py-2 text-sm text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none" />
+                </div>`;
+            c.appendChild(row);
+        }
+
+        // ── ÖNE ÇIKAN ÖZELLİKLER ──
+        function addAmenity() {
+            const c = document.getElementById('amenitiesContainer');
+            const i = c.children.length;
+
+            const row = document.createElement('div');
+            row.className = 'row-item flex gap-3';
+            row.innerHTML = `
+                <input name="Amenities[${i}].Name" placeholder="Uçuş Dahil"
+                       class="flex-1 rounded-lg border border-line bg-white px-3 py-2 text-sm text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none" />
+                <input name="Amenities[${i}].Icon" placeholder="flight"
+                       class="w-40 rounded-lg border border-line bg-white px-3 py-2 text-sm text-navy placeholder:text-muted/60 focus:border-teal focus:outline-none" />
+                <button type="button" onclick="removeRow(this, 'amenitiesContainer')"
+                        class="rounded-lg border border-line px-3 py-2 text-sm font-semibold text-red-600 hover:border-red-600">
+                    ✕
+                </button>`;
+            c.appendChild(row);
+        }
+
+        // asp.net liste bağlaması indekste boşluk kabul etmiyor bu yüzden sürekli yaptık
+        function removeRow(btn, containerId, prefix) {
+            btn.closest('.row-item').remove();
+
+            const rows = document.querySelectorAll(`#${containerId} .row-item`);
+            rows.forEach((row, index) => {
+                row.querySelectorAll('[name]').forEach(input => {
+                    input.name = input.name.replace(/\[\d+\]/, `[${index}]`);
+                });
+            });
+        }
+    </script>
+}

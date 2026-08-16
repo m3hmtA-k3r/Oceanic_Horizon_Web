@@ -47,5 +47,7 @@ namespace Oceanic_Horizon_Travel.DTOs.TourDtos
         public bool IsActive { get; set; }
 
         public IFormFile? ImageFile { get; set; }
+        public List<IFormFile>? GalleryFiles { get; set; }
+
     }
 }
