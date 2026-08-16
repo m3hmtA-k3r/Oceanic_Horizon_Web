@@ -1,0 +1,122 @@
+﻿@model Oceanic_Horizon_Travel.DTOs.BannerDtos.UpdateBannerDto
+
+@{
+    ViewData["Title"] = "Banner Düzenle";
+}
+
+<div class="max-w-3xl">
+
+    <div class="mb-8">
+        <p class="font-display text-xs font-bold uppercase tracking-[0.22em] text-teal-dark">Yönetim · Banner</p>
+        <h1 class="mt-2 font-display text-3xl font-bold tracking-tight text-navy">Banner Düzenle</h1>
+        <p class="mt-1 text-muted">Mevcut banner bilgilerini güncelle.</p>
+    </div>
+
+    <div class="rounded-card border border-line bg-white p-8 shadow-soft">
+
+        <div asp-validation-summary="All" class="mb-5 text-sm text-red-600"></div>
+
+        <form asp-action="Update" method="post" enctype="multipart/form-data" class="space-y-6">
+
+    <input asp-for="Id" type="hidden" />
+    <input asp-for="ImageUrl" type="hidden" />
+
+            <!-- BAŞLIK -->
+            <div class="rounded-xl border border-line bg-cream/30 p-5">
+                <p class="mb-3 text-xs font-bold uppercase tracking-wider text-teal-dark">Başlık</p>
+
+                <div>
+                    <label class="mb-1 block text-xs font-semibold text-muted">Türkçe</label>
+                    <input asp-for="Title.Tr"
+                           class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy focus:border-teal focus:outline-none transition" />
+                </div>
+
+                <details class="group mt-3">
+                    <summary class="inline-flex cursor-pointer list-none items-center gap-1.5 text-xs font-semibold text-teal-dark hover:underline">
+                        <span class="transition group-open:rotate-90">▸</span>
+                        Diğer diller (isteğe bağlı)
+                    </summary>
+
+                    <div class="mt-3 space-y-3">
+                        <div>
+                            <label class="mb-1 block text-xs font-semibold text-muted">English</label>
+                            <input asp-for="Title.En"
+                                   class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy focus:border-teal focus:outline-none transition" />
+                        </div>
+
+                        <div>
+                            <label class="mb-1 block text-xs font-semibold text-muted">Português</label>
+                            <input asp-for="Title.Pt"
+                                   class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy focus:border-teal focus:outline-none transition" />
+                        </div>
+                    </div>
+                </details>
+            </div>
+
+
+            <!-- AÇIKLAMA -->
+            <div class="rounded-xl border border-line bg-cream/30 p-5">
+                <p class="mb-3 text-xs font-bold uppercase tracking-wider text-teal-dark">Açıklama</p>
+
+                <div>
+                    <label class="mb-1 block text-xs font-semibold text-muted">Türkçe</label>
+                    <textarea asp-for="Description.Tr" rows="2"
+                              class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy focus:border-teal focus:outline-none transition"></textarea>
+                </div>
+
+                <details class="group mt-3">
+                    <summary class="inline-flex cursor-pointer list-none items-center gap-1.5 text-xs font-semibold text-teal-dark hover:underline">
+                        <span class="transition group-open:rotate-90">▸</span>
+                        Diğer diller (isteğe bağlı)
+                    </summary>
+
+                    <div class="mt-3 space-y-3">
+                        <div>
+                            <label class="mb-1 block text-xs font-semibold text-muted">English</label>
+                            <textarea asp-for="Description.En" rows="2"
+                                      class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy focus:border-teal focus:outline-none transition"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="mb-1 block text-xs font-semibold text-muted">Português</label>
+                            <textarea asp-for="Description.Pt" rows="2"
+                                      class="w-full rounded-xl border border-line bg-white px-4 py-3 font-medium text-navy focus:border-teal focus:outline-none transition"></textarea>
+                        </div>
+                    </div>
+                </details>
+            </div>
+
+
+    <!-- GÖRSEL -->
+    <div>
+        <label asp-for="ImageFile" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">Görseli Değiştir</label>
+        <input asp-for="ImageFile" type="file" accept="image/*"
+               class="w-full rounded-xl border border-line bg-cream/40 px-4 py-3 text-sm text-navy file:mr-4 file:rounded-full file:border-0 file:bg-teal file:px-5 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-teal-dark focus:border-teal focus:bg-white focus:outline-none transition" />
+        <p class="mt-1.5 text-xs text-muted">Boş bırakırsan mevcut görsel korunur.</p>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model?.ImageUrl))
+    {
+        <div>
+            <p class="mb-2 text-xs font-bold uppercase tracking-wider text-muted">Mevcut Görsel</p>
+            <img src="@Model.ImageUrl" alt="" class="h-40 w-full max-w-md rounded-xl object-cover" />
+        </div>
+    }
+
+    <label class="flex cursor-pointer items-center gap-3">
+        <input asp-for="IsActive" type="checkbox" class="h-5 w-5 rounded border-line text-teal focus:ring-teal" />
+        <span class="text-sm font-medium text-navy">Yayında olsun</span>
+    </label>
+
+    <div class="flex gap-3 border-t border-line pt-5">
+        <button type="submit" class="rounded-full bg-teal px-7 py-3 font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-teal-dark">
+            Güncelle
+        </button>
+        <a asp-action="Index" class="rounded-full border border-line px-6 py-3 font-semibold text-navy transition hover:border-navy">
+            İptal
+        </a>
+    </div>
+</form>
+
+    </div>
+</div>

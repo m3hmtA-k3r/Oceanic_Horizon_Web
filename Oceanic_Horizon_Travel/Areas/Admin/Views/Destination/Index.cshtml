@@ -1,0 +1,113 @@
+﻿@using System.Globalization
+@model List<Oceanic_Horizon_Travel.DTOs.DestinationDtos.ResultDestinationDto>
+
+@{
+    ViewData["Title"] = "Destinasyonlar";
+    var culture = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+}
+
+<div>
+
+    <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <div>
+            <p class="font-display text-xs font-bold uppercase tracking-[0.22em] text-teal-dark">Katalog</p>
+            <h1 class="mt-2 font-display text-3xl font-bold tracking-tight text-navy">Destinasyonlar</h1>
+            <p class="mt-1 text-muted">Turların ve konaklamaların bağlanacağı şehirleri buradan yönet.</p>
+        </div>
+
+        <a asp-action="Create"
+           class="rounded-full bg-teal px-6 py-3 font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-teal-dark">
+            Yeni Destinasyon
+        </a>
+    </div>
+
+    <div class="overflow-hidden rounded-card border border-line bg-white shadow-soft">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="border-b border-line bg-cream/50">
+                    <tr>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Görsel</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Destinasyon</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Kısa Açıklama</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Çeviriler</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Durum</th>
+                        <th class="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider text-muted">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model is null || !Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center text-muted">
+                                Henüz destinasyon eklenmemiş.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var destination in Model)
+                        {
+                            <tr class="border-b border-line last:border-0 hover:bg-cream/30">
+
+                                <td class="px-6 py-4">
+                                    <img src="@destination.ThumbnailUrl" alt="@destination.City.Get(culture)"
+                                         class="h-14 w-24 rounded-lg object-cover" />
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <p class="font-semibold text-navy">@destination.City.Get(culture)</p>
+                                    <p class="text-sm text-muted">@destination.Country.Get(culture)</p>
+                                    <p class="mt-0.5 text-xs text-teal-dark">/@destination.SeoUrl</p>
+                                </td>
+
+                                <td class="max-w-xs px-6 py-4 text-sm text-muted">
+                                    @destination.ShortDescription.Get(culture)
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <div class="flex gap-1">
+                                        <span class="rounded px-1.5 py-0.5 text-[0.65rem] font-bold @(string.IsNullOrWhiteSpace(destination.City.Tr) ? "bg-line text-muted" : "bg-teal/12 text-teal-dark")">TR</span>
+                                        <span class="rounded px-1.5 py-0.5 text-[0.65rem] font-bold @(string.IsNullOrWhiteSpace(destination.City.En) ? "bg-line text-muted" : "bg-teal/12 text-teal-dark")">EN</span>
+                                        <span class="rounded px-1.5 py-0.5 text-[0.65rem] font-bold @(string.IsNullOrWhiteSpace(destination.City.Pt) ? "bg-line text-muted" : "bg-teal/12 text-teal-dark")">PT</span>
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-col items-start gap-1.5">
+                                        @if (destination.IsActive)
+                                        {
+                                            <span class="rounded-full bg-teal/12 px-3 py-1 text-xs font-semibold text-teal-dark">Aktif</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="rounded-full bg-line px-3 py-1 text-xs font-semibold text-muted">Pasif</span>
+                                        }
+
+                                        @if (destination.IsFeatured)
+                                        {
+                                            <span class="rounded-full bg-star/15 px-3 py-1 text-xs font-semibold text-star">★ Öne çıkan</span>
+                                        }
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <div class="flex justify-end gap-2">
+                                        <a asp-action="Update" asp-route-id="@destination.Id"
+                                           class="rounded-full border border-line px-4 py-2 text-sm font-semibold text-navy transition hover:border-navy">
+                                            Düzenle
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@destination.Id"
+                                           onclick="return confirm('Bu destinasyon silinecek, emin misin?')"
+                                           class="rounded-full border border-line px-4 py-2 text-sm font-semibold text-red-600 transition hover:border-red-600">
+                                            Sil
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,6 +1,8 @@
 ﻿@import "tailwindcss";
 
 @source "../Views";
+@source "../Areas";
+
 
 
 @theme {
@@ -14,6 +16,11 @@
     --color-muted: #5d7180;
     --color-line: #e7e2d8;
     --color-star: #f4a92c;
+    /* Hata durumu */
+    --color-danger: #c26a52;
+    --color-danger-line: #d98b7d;
+    /* Form */
+    --color-placeholder: #a7b2ba;
     /* Fontlar */
     --font-display: 'Sora', sans-serif;
     --font-body: 'Inter', system-ui, sans-serif;
@@ -25,4 +32,11 @@
 }
 
 
+@utility scrollbar-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}

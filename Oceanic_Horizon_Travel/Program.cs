@@ -3,7 +3,12 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Options;
+using Oceanic_Horizon_Travel.Services.BannerServices;
+using Oceanic_Horizon_Travel.Services.CategoryServices;
+using Oceanic_Horizon_Travel.Services.DestinationServices;
+using Oceanic_Horizon_Travel.Services.FileServices;
 using Oceanic_Horizon_Travel.Services.MemberServices;
+using Oceanic_Horizon_Travel.Services.TourServices;
 using Oceanic_Horizon_Travel.Settings;
 using System.Reflection;
 
@@ -27,6 +32,12 @@ builder.Services.AddSingleton<IDatabaseSettings>(servideProvider =>
 });
 
 builder.Services.AddScoped<IMemberServices, MemberServices>();
+builder.Services.AddScoped<IBannerServices, BannerServices>();
+builder.Services.AddScoped<IDestinationServices, DestinationServices>();
+builder.Services.AddScoped<ITourServices, TourServices>();
+builder.Services.AddScoped<IFileServices, FileServices>();
+builder.Services.AddScoped<ICategoryServices, CategoryServices>();
+
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(opt => 
@@ -38,8 +49,29 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+// Desteklenen diller — sıra önemli, ilki varsayılan
+var supportedCultures = new[] { "tr", "en", "pt" };
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.SetDefaultCulture("tr")
+           .AddSupportedCultures(supportedCultures)
+           .AddSupportedUICultures(supportedCultures);
+});
+
+
+
+// Çeviri dosyalarının Resources klasöründe olduğunu söylüyoruz
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+builder.Services.AddControllersWithViews(options =>
+{
+    // Nullable açık olduğu için ASP.NET her non-nullable string'e otomatik [Required] etkiliyor bu yüzden bunu yaptım.
+    options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+})
+.AddViewLocalization()
+.AddDataAnnotationsLocalization();
+
 
 var app = builder.Build();
 
@@ -54,6 +86,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseRequestLocalization();
 app.UseRouting();
 
 app.UseAuthentication(); // Burası Login için yapılıyor 
