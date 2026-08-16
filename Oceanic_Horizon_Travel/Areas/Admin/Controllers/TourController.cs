@@ -85,11 +85,11 @@ public class TourController(ITourServices _tourServices,IDestinationServices _de
             destinations.Select(x => new
             {
                 Id = x.Id,
-                Name = $"{x.City.Tr} — {x.Country.Tr}"      // "Kapadokya — Türkiye"
+                Name = $"{x.City.Tr} — {x.Country.Tr}"  
             }),
-            "Id",       // option value
-            "Name",     // option metni
-            selectedId  // hangisi seçili gelsin
+            "Id",      
+            "Name",    
+            selectedId 
         );
     }
 

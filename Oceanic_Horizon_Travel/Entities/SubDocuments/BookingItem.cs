@@ -2,22 +2,23 @@
 {
     public class BookingItem
     {
-        public string Type { get; set; } // "Tour" ve "Estate"
+        public string Type { get; set; } 
 
-        public string Title { get; set; } // Ürün adı — rezervasyon anında KOPYALANIR
+        public string Title { get; set; }
 
-        public string? TourDepartureId { get; set; }// Tur kalemiyse hangi kalkış
+        public string? TourDateId { get; set; } 
 
-        public string? RoomId { get; set; } // Konaklama kalemiyse hangi oda
 
-        public DateTime? CheckIn { get; set; } // Konaklama girişi
+        public string? RoomId { get; set; } 
 
-        public DateTime? CheckOut { get; set; }// Konaklama çıkışı
+        public DateTime? CheckIn { get; set; }  
 
-        public int Quantity { get; set; } // Kişi sayısı (tur) veya oda sayısı (konaklama)
+        public DateTime? CheckOut { get; set; } 
 
-        public decimal UnitPrice { get; set; }  // Birim fiyat — rezervasyon anında DONMUŞ
+        public int Quantity { get; set; }  
 
-        public decimal Subtotal { get; set; }// Ara toplam
+        public decimal UnitPrice { get; set; } 
+
+        public decimal Subtotal { get; set; } 
     }
 }
