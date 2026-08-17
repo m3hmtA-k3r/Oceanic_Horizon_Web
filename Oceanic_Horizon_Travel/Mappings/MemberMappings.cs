@@ -9,6 +9,9 @@ namespace Oceanic_Horizon_Travel.Mappings
         public MemberMappings()
         {
             CreateMap<RegisterMemberDto, Member>();
+
+            CreateMap<Member, ResultMemberDto>();
+            CreateMap<ResultMemberDto, UpdateMemberDto>();
         }
     }
 }

@@ -8,11 +8,13 @@
       "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
+    --color-red-100: oklch(93.6% 0.032 17.717);
     --color-red-600: oklch(57.7% 0.245 27.325);
     --color-white: #fff;
     --spacing: 0.25rem;
     --container-xs: 20rem;
     --container-md: 28rem;
+    --container-2xl: 42rem;
     --container-3xl: 48rem;
     --container-4xl: 56rem;
     --container-7xl: 80rem;
@@ -379,6 +381,9 @@
   .mb-12 {
     margin-bottom: calc(var(--spacing) * 12);
   }
+  .ml-2 {
+    margin-left: calc(var(--spacing) * 2);
+  }
   .ml-\[250px\] {
     margin-left: 250px;
   }
@@ -436,6 +441,9 @@
   }
   .h-5 {
     height: calc(var(--spacing) * 5);
+  }
+  .h-6 {
+    height: calc(var(--spacing) * 6);
   }
   .h-7 {
     height: calc(var(--spacing) * 7);
@@ -503,6 +511,9 @@
   .w-5 {
     width: calc(var(--spacing) * 5);
   }
+  .w-6 {
+    width: calc(var(--spacing) * 6);
+  }
   .w-7 {
     width: calc(var(--spacing) * 7);
   }
@@ -544,6 +555,9 @@
   }
   .w-full {
     width: 100%;
+  }
+  .max-w-2xl {
+    max-width: var(--container-2xl);
   }
   .max-w-3xl {
     max-width: var(--container-3xl);
@@ -764,6 +778,12 @@
   .border-navy {
     border-color: var(--color-navy);
   }
+  .border-star\/40 {
+    border-color: color-mix(in srgb, #f4a92c 40%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-star) 40%, transparent);
+    }
+  }
   .border-teal\/30 {
     border-color: color-mix(in srgb, #0fa3a3 30%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -832,6 +852,18 @@
   }
   .bg-navy {
     background-color: var(--color-navy);
+  }
+  .bg-red-100 {
+    background-color: var(--color-red-100);
+  }
+  .bg-star {
+    background-color: var(--color-star);
+  }
+  .bg-star\/10 {
+    background-color: color-mix(in srgb, #f4a92c 10%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-star) 10%, transparent);
+    }
   }
   .bg-star\/15 {
     background-color: color-mix(in srgb, #f4a92c 15%, transparent);
@@ -959,6 +991,9 @@
   .px-2 {
     padding-inline: calc(var(--spacing) * 2);
   }
+  .px-2\.5 {
+    padding-inline: calc(var(--spacing) * 2.5);
+  }
   .px-3 {
     padding-inline: calc(var(--spacing) * 3);
   }
@@ -1024,6 +1059,9 @@
   }
   .py-\[4\.5rem\] {
     padding-block: 4.5rem;
+  }
+  .pt-3 {
+    padding-top: calc(var(--spacing) * 3);
   }
   .pt-4 {
     padding-top: calc(var(--spacing) * 4);

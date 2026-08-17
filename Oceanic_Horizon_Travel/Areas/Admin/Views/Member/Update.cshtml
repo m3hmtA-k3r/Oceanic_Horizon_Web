@@ -1,0 +1,114 @@
+﻿@model Oceanic_Horizon_Travel.DTOs.MemberDtos.UpdateMemberDto
+
+@{
+    ViewData["Title"] = "User Update";
+
+    // Giriş yapan kişi süper yönetici mi?
+    var isSuperAdmin = User.IsInRole("SuperAdmin");
+
+    // Admin rolünü sadece süper yönetici verebilir
+    var assignableRoles = isSuperAdmin
+        ? new[] { "Member", "Host", "Personnel", "Admin" }
+        : new[] { "Member", "Host", "Personnel" };
+
+    // Düzenlenen kişi süper yönetici mi? (rol formda değiştirilemez, sadece gösterilir)
+    var targetIsSuperAdmin = Model!.Roles.Contains("SuperAdmin");
+
+    var roleDescriptions = new Dictionary<string, string>
+    {
+        ["Member"] = "sıradan üye — rezervasyon yapabilir",
+        ["Host"] = "ev sahibi — kendi ilanını ekler",
+        ["Personnel"] = "personel — operasyon ekibi",
+        ["Admin"] = "yönetici — panele tam erişim"
+    };
+}
+
+<div class="max-w-2xl">
+
+    <div class="mb-8">
+        <p class="font-display text-xs font-bold uppercase tracking-[0.22em] text-teal-dark">Yönetim · Kullanıcı</p>
+        <h1 class="mt-2 font-display text-3xl font-bold tracking-tight text-navy">@Model?.FirstName @Model?.LastName</h1>
+        <p class="mt-1 text-muted">@Model?.Email</p>
+    </div>
+
+    <div class="rounded-card border border-line bg-white p-8 shadow-soft">
+
+        <div asp-validation-summary="All" class="mb-5 text-sm text-red-600"></div>
+
+        <form asp-action="Update" method="post" class="space-y-6">
+
+            <input asp-for="Id" type="hidden" />
+            <input asp-for="FirstName" type="hidden" />
+            <input asp-for="LastName" type="hidden" />
+            <input asp-for="Email" type="hidden" />
+
+
+            <!--  SÜPER YÖNETİCİ UYARISI -->
+            @if (targetIsSuperAdmin)
+            {
+                <div class="rounded-xl border border-star/40 bg-star/10 p-5">
+                    <div class="flex items-start gap-3">
+                        <span class="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-star text-xs font-bold text-navy">★</span>
+                        <div>
+                            <p class="text-sm font-bold text-navy">Süper Yönetici</p>
+                            <p class="mt-1 text-xs text-muted">
+                                Bu rol form üzerinden verilemez veya alınamaz — yalnızca veritabanından değiştirilir.
+                                Diğer roller ve hesap durumu aşağıdan düzenlenebilir.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- ROLLER -->
+            <div class="rounded-xl border border-line bg-cream/30 p-5">
+                <p class="mb-1 text-xs font-bold uppercase tracking-wider text-teal-dark">Roller</p>
+                <p class="mb-4 text-xs text-muted">Bir üye birden fazla rol taşıyabilir.</p>
+
+                <div class="space-y-3">
+                    @foreach (var role in assignableRoles)
+                    {
+                        <label class="flex cursor-pointer items-start gap-3">
+                            <input type="checkbox" name="Roles" value="@role"
+                                   checked="@(Model!.Roles.Contains(role))"
+                                   class="mt-0.5 h-5 w-5 rounded border-line text-teal focus:ring-teal" />
+                            <div>
+                                <span class="text-sm font-semibold text-navy">@role</span>
+                                <span class="ml-2 text-xs text-muted">@roleDescriptions[role]</span>
+                            </div>
+                        </label>
+                    }
+                </div>
+
+                @if (!isSuperAdmin)
+                {
+                    <p class="mt-4 border-t border-line pt-3 text-xs text-muted">
+                        Yönetici yetkisi vermek için süper yönetici olmanız gerekiyor.
+                    </p>
+                }
+            </div>
+
+            <!-- HESAP DURUMU -->
+            <div class="rounded-xl border border-line bg-cream/30 p-5">
+                <p class="mb-4 text-xs font-bold uppercase tracking-wider text-teal-dark">Hesap Durumu</p>
+
+                <label class="flex cursor-pointer items-start gap-3">
+                    <input asp-for="IsActive" type="checkbox" class="mt-0.5 h-5 w-5 rounded border-line text-teal focus:ring-teal" />
+                    <div>
+                        <span class="text-sm font-semibold text-navy">Hesap aktif</span>
+                        <span class="ml-2 text-xs text-muted">pasif hesaplar giriş yapamaz</span>
+                    </div>
+                </label>
+            </div>
+
+            <div class="flex gap-3 border-t border-line pt-5">
+                <button type="submit" class="rounded-full bg-teal px-7 py-3 font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-teal-dark">
+                    Kaydet
+                </button>
+                <a asp-action="Index" class="rounded-full border border-line px-6 py-3 font-semibold text-navy transition hover:border-navy">
+                    İptal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

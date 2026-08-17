@@ -87,7 +87,7 @@
                     {
                         <div class="flex items-center gap-2">
 
-                            @if (User.IsInRole("Admin"))
+                            @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
                             {
                                 <a asp-area="Admin" asp-controller="Banner" asp-action="Index"
                                    class="hidden rounded-full border border-navy bg-navy px-4 py-2 text-sm font-semibold text-white transition hover:bg-navy-2 md:inline-block">

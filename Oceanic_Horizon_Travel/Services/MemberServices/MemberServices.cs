@@ -35,9 +35,6 @@ namespace Oceanic_Horizon_Travel.Services.MemberServices
             member.Roles = new List<string> { "Member" };
 
             await _memberCollection.InsertOneAsync(member); 
-
-
-
         }
 
         public async Task<Member> LoginAsync(LoginMemberDto loginMemberDto)
@@ -54,6 +51,32 @@ namespace Oceanic_Horizon_Travel.Services.MemberServices
 
             return member;
 
+
+        }
+
+
+
+        public async Task<List<ResultMemberDto>> GetAllAsync()
+        {
+            var members = await _memberCollection.Find(_ => true).SortByDescending(x => x.CreatedDate).ToListAsync();
+
+            return _mapper.Map<List<ResultMemberDto>>(members);
+        }
+
+        public async Task<ResultMemberDto> GetByIdAsync(string id)
+        {
+            var member = await _memberCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+
+            return _mapper.Map<ResultMemberDto>(member);
+        }
+
+        public async Task UpdateRolesAndStatusAsync(UpdateMemberDto updateMemberDto)
+        {// Admin sadece rol ve durum değiştirebilir.
+         // FindOneAndReplace ile degil — Update.Set ile kısmi güncelleme yapıyoruz,
+            var update = Builders<Member>.Update.Set(s => s.Roles, updateMemberDto.Roles)
+                                                .Set(z => z.IsActive, updateMemberDto.IsActive);
+
+            await _memberCollection.UpdateOneAsync(x => x.Id == updateMemberDto.Id, update);
 
         }
     }

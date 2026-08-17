@@ -1,0 +1,111 @@
+﻿@model List<Oceanic_Horizon_Travel.DTOs.MemberDtos.ResultMemberDto>
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+<div>
+
+    <div class="mb-8">
+        <p class="font-display text-xs font-bold uppercase tracking-[0.22em] text-teal-dark">Yönetim</p>
+        <h1 class="mt-2 font-display text-3xl font-bold tracking-tight text-navy">Kullanıcılar</h1>
+        <p class="mt-1 text-muted">Sistemdeki tüm üyeler — @(Model?.Count ?? 0) kayıt.</p>
+    </div>
+
+    @if (TempData["Success"] is not null)
+    {
+        <div class="mb-6 rounded-xl border border-teal/30 bg-teal/10 px-5 py-4 text-sm font-semibold text-teal-dark">
+            @TempData["Success"]
+        </div>
+    }
+
+    <div class="overflow-hidden rounded-card border border-line bg-white shadow-soft">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="border-b border-line bg-cream/50">
+                    <tr>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Üye</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">İletişim</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Roller</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Kayıt</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Durum</th>
+                        <th class="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider text-muted">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model is null || !Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center text-muted">
+                                Henüz üye yok.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var member in Model)
+                        {
+                            <tr class="border-b border-line last:border-0 hover:bg-cream/30">
+
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-navy text-sm font-bold text-white">
+                                            @(member.FirstName?.Substring(0, 1).ToUpper())@(member.LastName?.Substring(0, 1).ToUpper())
+                                        </span>
+                                        <p class="font-semibold text-navy">@member.FirstName @member.LastName</p>
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4 text-sm">
+                                    <p class="text-navy">@member.Email</p>
+                                    <p class="text-xs text-muted">@member.PhoneNumber</p>
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-wrap gap-1">
+                                        @foreach (var role in member.Roles)
+                                        {
+                                            <span class="rounded-full px-2.5 py-1 text-xs font-semibold @(role switch
+                                                  {
+                                                      "SuperAdmin" => "bg-star text-navy",
+                                                      "Admin" => "bg-navy text-white",
+                                                      _ => "bg-teal/12 text-teal-dark"
+                                                  })">
+                                                        @role
+                                             </span>
+                                                                }
+
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4 text-sm text-muted">
+                                    @member.CreatedDate.ToString("dd.MM.yyyy")
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    @if (member.IsActive)
+                                    {
+                                        <span class="rounded-full bg-teal/12 px-3 py-1 text-xs font-semibold text-teal-dark">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-600">Pasif</span>
+                                    }
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <div class="flex justify-end">
+                                        <a asp-action="Update" asp-route-id="@member.Id"
+                                           class="rounded-full border border-line px-4 py-2 text-sm font-semibold text-navy transition hover:border-navy">
+                                            Düzenle
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
