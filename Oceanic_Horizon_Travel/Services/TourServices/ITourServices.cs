@@ -9,5 +9,8 @@ namespace Oceanic_Horizon_Travel.Services.TourServices
         Task CreateAsync(CreateTourDto createTourDto);
         Task UpdateAsync(UpdateTourDto updateTourDto);
         Task DeleteAsync(string id);
+
+        Task<List<ResultTourDto>> GetByIdsAsync(List<string> ids); // Toplu çekme metotları 
+
     }
 }

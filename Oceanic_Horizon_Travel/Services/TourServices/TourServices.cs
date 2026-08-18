@@ -33,6 +33,16 @@ namespace Oceanic_Horizon_Travel.Services.TourServices
             return _mapper.Map<ResultTourDto>(tours);
         }
 
+        public async Task<List<ResultTourDto>> GetByIdsAsync(List<string> ids) // Toplu çekme metotları 
+        {
+            if(ids is null || ids.Count == 0)            
+                return new List<ResultTourDto>();
+
+            var tours = await _tourCollection.Find(x => ids.Contains(x.Id)).ToListAsync();
+
+            return _mapper.Map<List<ResultTourDto>>(tours);
+        }
+
         public async Task CreateAsync(CreateTourDto createTourDto)
         {
             var tour = _mapper.Map<Tour>(createTourDto);
@@ -48,5 +58,7 @@ namespace Oceanic_Horizon_Travel.Services.TourServices
         {
             await _tourCollection.DeleteOneAsync(x => x.Id == id);
         }
+
+       
     }
 }

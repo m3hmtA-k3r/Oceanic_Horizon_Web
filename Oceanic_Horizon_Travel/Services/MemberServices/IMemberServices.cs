@@ -16,5 +16,8 @@ namespace Oceanic_Horizon_Travel.Services.MemberServices
         Task<List<ResultMemberDto>> GetAllAsync();
         Task<ResultMemberDto> GetByIdAsync(string id);
         Task UpdateRolesAndStatusAsync(UpdateMemberDto updateMemberDto);
+
+        Task<List<ResultMemberDto>> GetByIdsAsync(List<string> ids); // Toplu çekme metotları 
+
     }
 }

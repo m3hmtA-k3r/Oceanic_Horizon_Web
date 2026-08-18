@@ -79,5 +79,15 @@ namespace Oceanic_Horizon_Travel.Services.MemberServices
             await _memberCollection.UpdateOneAsync(x => x.Id == updateMemberDto.Id, update);
 
         }
+
+        public async Task<List<ResultMemberDto>> GetByIdsAsync(List<string> ids)
+        {
+           if(ids == null || ids.Count == 0)
+                return new List<ResultMemberDto>();
+
+           var members = await _memberCollection.Find(x => ids.Contains(x.Id)).ToListAsync();
+
+            return _mapper.Map<List<ResultMemberDto>>(members);
+        }
     }
 }
