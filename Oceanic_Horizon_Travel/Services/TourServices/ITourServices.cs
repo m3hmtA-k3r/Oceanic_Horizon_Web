@@ -12,5 +12,10 @@ namespace Oceanic_Horizon_Travel.Services.TourServices
 
         Task<List<ResultTourDto>> GetByIdsAsync(List<string> ids); // Toplu çekme metotları 
 
+        Task UpdateRatingAsync(string tourId, double rating, int reviewCount); //puan güncelleme
+        Task UpdateSeatsAsync(string tourId, string tourDateId, int delta); // kalkış kontenjanını negatif düsürür, pozitif iade eder
+
+
+
     }
 }

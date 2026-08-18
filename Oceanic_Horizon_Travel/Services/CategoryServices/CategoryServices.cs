@@ -43,6 +43,11 @@ namespace Oceanic_Horizon_Travel.Services.CategoryServices
         public async Task UpdateAsync(UpdateCategoryDto updateCategoryDto)
         {
            var category = _mapper.Map<Category>(updateCategoryDto);
+
+            var existing = await _categoryCollection.Find(x => x.Id == category.Id).FirstOrDefaultAsync();
+            if (existing is not null)
+                category.CreatedDate = existing.CreatedDate;
+
             await _categoryCollection.FindOneAndReplaceAsync(z => z.Id == category.Id, category);
         }
 

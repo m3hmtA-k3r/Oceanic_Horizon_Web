@@ -1,8 +1,95 @@
-﻿
+﻿@using Oceanic_Horizon_Travel.DTOs.QuestionDtos
+@model AnswerQuestionDto
+
 @{
-    ViewData["Title"] = "Answer";
-    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Soruyu Cevapla";
+
+    var question = ViewBag.Question as ResultQuestionDto;
 }
 
-<h1>Answer</h1>
+<div class="max-w-3xl">
 
+    <div class="mb-8">
+        <p class="font-display text-xs font-bold uppercase tracking-[0.22em] text-teal-dark">Yönetim · Soru</p>
+        <h1 class="mt-2 font-display text-3xl font-bold tracking-tight text-navy">
+            @(question?.IsAnswered == true ? "Cevabı Düzenle" : "Soruyu Cevapla")
+        </h1>
+        <p class="mt-1 text-muted">@question?.TourTitle</p>
+    </div>
+
+    <!--  soru Carttı-->
+    <div class="mb-6 rounded-card border border-line bg-cream/40 p-6">
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-navy text-sm font-bold text-white">
+                    @(question?.MemberName?.Substring(0, 1).ToUpper() ?? "?")
+                </span>
+                <div>
+                    <p class="text-sm font-semibold text-navy">@question?.MemberName</p>
+                    <p class="text-xs text-muted">@question?.CreatedDate.ToString("dd MMMM yyyy · HH:mm")</p>
+                </div>
+            </div>
+
+            <div class="flex gap-2">
+                @if (question?.IsAnswered == true)
+                {
+                    <span class="rounded-full bg-teal/12 px-3 py-1 text-xs font-semibold text-teal-dark">Cevaplandı</span>
+                }
+                else
+                {
+                    <span class="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-600">Bekliyor</span>
+                }
+
+                @if (question?.IsApproved == true)
+                {
+                    <span class="rounded-full bg-navy px-3 py-1 text-xs font-semibold text-white">Yayında</span>
+                }
+            </div>
+        </div>
+
+        <p class="border-l-4 border-teal pl-4 text-navy">@question?.Text</p>
+    </div>
+
+    <!--Cevap formu-->
+    <div class="rounded-card border border-line bg-white p-8 shadow-soft">
+
+        <div asp-validation-summary="All" class="mb-5 text-sm text-red-600"></div>
+
+        <form asp-action="Answer" method="post" class="space-y-6">
+
+            <input asp-for="QuestionId" type="hidden" />
+
+            <div>
+                <label asp-for="Answer" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">Cevabınız</label>
+                <textarea asp-for="Answer" rows="6" placeholder="Sorunun cevabını yazın..."
+                          class="w-full rounded-xl border border-line bg-cream/40 px-4 py-3 font-medium text-navy placeholder:text-muted/60 focus:border-teal focus:bg-white focus:outline-none transition"></textarea>
+                <p class="mt-1.5 text-xs text-muted">
+                    Yayınlanan cevaplar tur detay sayfasında herkes tarafından görülür.
+                </p>
+            </div>
+
+            <div class="flex flex-wrap gap-3 border-t border-line pt-5">
+
+                <button type="submit" name="publish" value="true"
+                        class="rounded-full bg-teal px-7 py-3 font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-teal-dark">
+                    Kaydet ve Yayınla
+                </button>
+
+                <button type="submit" name="publish" value="false"
+                        class="rounded-full border border-line px-6 py-3 font-semibold text-navy transition hover:border-navy">
+                    Sadece Kaydet
+                </button>
+
+                <a asp-action="Index"
+                   class="rounded-full px-6 py-3 font-semibold text-muted transition hover:text-navy">
+                    İptal
+                </a>
+            </div>
+
+            <p class="text-xs text-muted">
+                <span class="font-semibold">Sadece Kaydet</span> — cevabı kaydeder ama sitede göstermez.
+                Kişiye özel sorular için kullanışlı.
+            </p>
+        </form>
+    </div>
+</div>

@@ -15,13 +15,13 @@ namespace Oceanic_Horizon_Travel.Entities
         public decimal TotalPrice { get; set; }
 
     
-        public string? TourId { get; set; }
-        public string? TourDateId { get; set; }
+        public string TourId { get; set; }
+        public string TourDateId { get; set; }
         public int AdultCount { get; set; }
         public int ChildCount { get; set; }
 
         
-        public string? HostId { get; set; }
+        public string HostId { get; set; }
         public decimal CommissionAmount { get; set; }
         public decimal HostEarning { get; set; }
 

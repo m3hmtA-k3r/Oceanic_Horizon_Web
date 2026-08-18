@@ -38,12 +38,19 @@ namespace Oceanic_Horizon_Travel.Services.DestinationServices
         public async Task CreateAsync(CreateDestinationDto createDestinationDto)
         {
             var destination = _mapper.Map<Destination>(createDestinationDto);
+            destination.CreatedDate = DateTime.UtcNow;
+
             await _destinationCollection.InsertOneAsync(destination);
         }       
 
         public async Task UpdateAsync(UpdateDestinationDto updateDestinationDto)
         {
             var destination = _mapper.Map<Destination>(updateDestinationDto);
+
+            var existing = await _destinationCollection.Find(x => x.Id == destination.Id).FirstOrDefaultAsync();
+            if (existing is not null)
+                destination.CreatedDate = existing.CreatedDate;
+
             await _destinationCollection.FindOneAndReplaceAsync(x => x.Id == destination.Id, destination);
         }
         public async Task DeleteAsync(string id)

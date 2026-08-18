@@ -41,12 +41,19 @@ namespace Oceanic_Horizon_Travel.Services.BannerServices
         public async Task CreateAsync(CreateBannerDto createBannerDto)
         {
             var banner = _mapper.Map<Banner>(createBannerDto);
+            banner.CreatedDate = DateTime.UtcNow;
+
             await _bannerCollection.InsertOneAsync(banner);
         }
 
         public async Task UpdateAsync(UpdateBannerDto updateBannerDto)
         {
             var banner = _mapper.Map<Banner>(updateBannerDto);
+
+            var existing = await _bannerCollection.Find(x => x.Id == banner.Id).FirstOrDefaultAsync();
+            if (existing is not null)
+                banner.CreatedDate = existing.CreatedDate;
+
             await _bannerCollection.FindOneAndReplaceAsync(x => x.Id == banner.Id, banner);
         }
 

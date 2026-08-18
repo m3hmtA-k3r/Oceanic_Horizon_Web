@@ -9,6 +9,7 @@ using Oceanic_Horizon_Travel.Services.DestinationServices;
 using Oceanic_Horizon_Travel.Services.FileServices;
 using Oceanic_Horizon_Travel.Services.MemberServices;
 using Oceanic_Horizon_Travel.Services.QuestionServices;
+using Oceanic_Horizon_Travel.Services.ReviewServices;
 using Oceanic_Horizon_Travel.Services.SiteSettingsServices;
 using Oceanic_Horizon_Travel.Services.TourServices;
 using Oceanic_Horizon_Travel.Settings;
@@ -41,6 +42,8 @@ builder.Services.AddScoped<IFileServices, FileServices>();
 builder.Services.AddScoped<ICategoryServices, CategoryServices>();
 builder.Services.AddScoped<ISiteSettingsServices, SiteSettingsServices>();
 builder.Services.AddScoped<IQuestionServices, QuestionServices>();
+builder.Services.AddScoped<IReviewServices, ReviewServices>();
+
 
 
 

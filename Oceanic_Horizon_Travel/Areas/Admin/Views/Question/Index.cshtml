@@ -1,8 +1,182 @@
-﻿
+﻿@model List<Oceanic_Horizon_Travel.DTOs.QuestionDtos.ResultQuestionDto>
+
 @{
-    ViewData["Title"] = "Index";
-    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Sorular";
+
+    var currentStatus = ViewBag.CurrentStatus as string ?? "all";
+    var pendingCount = (int)(ViewBag.PendingCount ?? 0);
+
+    var filters = new (string Key, string Label)[]
+    {
+        ("all", "Tümü"),
+        ("pending", "Yanıt Bekleyenler"),
+        ("answered", "Cevaplandı"),
+        ("published", "Yayında"),
+        ("unpublished", "Yayında Değil")
+    };
 }
 
-<h1>Index</h1>
+<div>
 
+    <div class="mb-8">
+        <p class="font-display text-xs font-bold uppercase tracking-[0.22em] text-teal-dark">Yönetim</p>
+        <h1 class="mt-2 font-display text-3xl font-bold tracking-tight text-navy">Sorular</h1>
+        <p class="mt-1 text-muted">
+            Turlar hakkında gelen sorular.
+            @if (pendingCount > 0)
+            {
+                <span class="font-semibold text-red-600">@pendingCount soru yanıt bekliyor.</span>
+            }
+        </p>
+    </div>
+
+    @if (TempData["Success"] is not null)
+    {
+        <div class="mb-6 rounded-xl border border-teal/30 bg-teal/10 px-5 py-4 text-sm font-semibold text-teal-dark">
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] is not null)
+    {
+        <div class="mb-6 rounded-xl border border-red-300 bg-red-50 px-5 py-4 text-sm font-semibold text-red-600">
+            @TempData["Error"]
+        </div>
+    }
+
+    <!-- filtre -->
+    <div class="mb-6 flex flex-wrap gap-2">
+        @foreach (var f in filters)
+        {
+            var isActive = currentStatus == f.Key;
+            var routeStatus = f.Key == "all" ? null : f.Key;
+
+            <a asp-action="Index" asp-route-status="@routeStatus"
+               class="rounded-full border px-4 py-2 text-sm font-semibold transition @(isActive
+                                  ? "border-teal bg-teal text-white"
+                                  : "border-line bg-white text-navy hover:border-navy")">
+            @f.Label
+            @if (f.Key == "pending" && pendingCount > 0)
+                {
+                    <span class="ml-1.5 rounded-full bg-red-600 px-1.5 py-0.5 text-[0.65rem] font-bold text-white">@pendingCount</span>
+                }
+            </a>
+        }
+    </div>
+
+    <div class="overflow-hidden rounded-card border border-line bg-white shadow-soft">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="border-b border-line bg-cream/50">
+                    <tr>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Tur</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Üye</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Soru</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Durum</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Tarih</th>
+                        <th class="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider text-muted">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model is null || !Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center text-muted">
+                                Bu filtreye uyan soru yok.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var q in Model)
+                        {
+                            <tr class="border-b border-line last:border-0 hover:bg-cream/30 @(!q.IsAnswered ? "bg-red-50/40" : "")">
+
+                                <td class="px-6 py-4">
+                                    <p class="text-sm font-semibold text-navy">@q.TourTitle</p>
+                                </td>
+
+                                <td class="px-6 py-4 text-sm text-muted">
+                                    @q.MemberName
+                                </td>
+
+                                <td class="max-w-md px-6 py-4">
+                                    <p class="text-sm text-navy">@q.Text</p>
+
+                                    @if (!string.IsNullOrWhiteSpace(q.Answer))
+                                    {
+                                        <p class="mt-2 border-l-2 border-teal pl-3 text-xs text-muted">
+                                            <span class="font-semibold text-teal-dark">Cevap:</span> @q.Answer
+                                        </p>
+                                    }
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-col items-start gap-1.5">
+                                        @if (q.IsAnswered)
+                                        {
+                                            <span class="rounded-full bg-teal/12 px-3 py-1 text-xs font-semibold text-teal-dark">Cevaplandı</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-600">Bekliyor</span>
+                                        }
+
+                                        @if (q.IsApproved)
+                                        {
+                                            <span class="rounded-full bg-navy px-3 py-1 text-xs font-semibold text-white">Yayında</span>
+                                        }
+                                        else if (q.IsAnswered)
+                                        {
+                                            <span class="rounded-full bg-line px-3 py-1 text-xs font-semibold text-muted">Yayında değil</span>
+                                        }
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4 text-sm text-muted">
+                                    <p>@q.CreatedDate.ToString("dd.MM.yyyy")</p>
+                                    @if (q.AnsweredDate.HasValue)
+                                    {
+                                        <p class="mt-0.5 text-xs text-teal-dark">↳ @q.AnsweredDate.Value.ToString("dd.MM.yyyy")</p>
+                                    }
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-wrap justify-end gap-2">
+
+                                        <a asp-action="Answer" asp-route-id="@q.Id"
+                                           class="rounded-full border border-line px-4 py-2 text-sm font-semibold text-navy transition hover:border-navy">
+                                            @(q.IsAnswered ? "Düzenle" : "Cevapla")
+                                        </a>
+
+                                        @if (q.IsAnswered && !q.IsApproved)
+                                        {
+                                            <a asp-action="Publish" asp-route-id="@q.Id"
+                                               class="rounded-full bg-teal px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-dark">
+                                                Yayınla
+                                            </a>
+                                        }
+
+                                        @if (q.IsApproved)
+                                        {
+                                            <a asp-action="Unpublish" asp-route-id="@q.Id"
+                                               class="rounded-full border border-line px-4 py-2 text-sm font-semibold text-muted transition hover:border-navy hover:text-navy">
+                                                Yayından Kaldır
+                                            </a>
+                                        }
+
+                                        <a asp-action="Delete" asp-route-id="@q.Id"
+                                           onclick="return confirm('Bu soru silinecek, emin misin?')"
+                                           class="rounded-full border border-line px-4 py-2 text-sm font-semibold text-red-600 transition hover:border-red-600">
+                                            Sil
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
