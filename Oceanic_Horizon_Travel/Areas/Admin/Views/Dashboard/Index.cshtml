@@ -1,0 +1,242 @@
+﻿@model Oceanic_Horizon_Travel.DTOs.DashboardDtos.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="space-y-6">
+
+    <!-- ÖZET KARTLARI -->
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+
+        <div class="rounded-card border border-line bg-white p-6 shadow-soft">
+            <p class="text-xs font-bold uppercase tracking-wider text-muted">Toplam Ciro</p>
+            <p class="mt-2 font-display text-3xl font-bold text-navy">@Model.Summary.TotalRevenue.ToString("N0")</p>
+            <p class="mt-1 text-xs text-muted">Tahsil edilen rezervasyonlar</p>
+        </div>
+
+        <div class="rounded-card border border-line bg-white p-6 shadow-soft">
+            <p class="text-xs font-bold uppercase tracking-wider text-muted">Rezervasyon</p>
+            <p class="mt-2 font-display text-3xl font-bold text-navy">@Model.Summary.TotalBookings</p>
+            <p class="mt-1 text-xs text-muted">Tüm zamanlar</p>
+        </div>
+
+        <div class="rounded-card border border-line bg-white p-6 shadow-soft">
+            <p class="text-xs font-bold uppercase tracking-wider text-muted">Bekleyen Talep</p>
+            <p class="mt-2 font-display text-3xl font-bold @(Model.Summary.PendingBookings > 0 ? "text-red-600" : "text-navy")">
+                @Model.Summary.PendingBookings
+            </p>
+            <a asp-area="Admin" asp-controller="Booking" asp-action="Index" asp-route-status="Bekliyor"
+               class="mt-1 inline-block text-xs font-semibold text-teal-dark hover:underline">Onay bekliyor →</a>
+        </div>
+
+        <div class="rounded-card border border-line bg-white p-6 shadow-soft">
+            <p class="text-xs font-bold uppercase tracking-wider text-muted">Toplam Üye</p>
+            <p class="mt-2 font-display text-3xl font-bold text-navy">@Model.Summary.TotalMembers</p>
+            <p class="mt-1 text-xs text-muted">Kayıtlı kullanıcı</p>
+        </div>
+    </div>
+
+    <!-- GRAFİKLER -->
+    <div class="grid gap-6 lg:grid-cols-3">
+
+        <div class="rounded-card border border-line bg-white p-6 shadow-soft lg:col-span-2">
+            <h2 class="font-display text-lg font-bold text-navy">Aylık Ciro</h2>
+            <p class="mb-4 text-xs text-muted">Son altı ayda tahsil edilen tutar</p>
+            <div class="h-72">
+                <canvas id="monthlyRevenueChart"></canvas>
+            </div>
+        </div>
+
+        <div class="rounded-card border border-line bg-white p-6 shadow-soft">
+            <h2 class="font-display text-lg font-bold text-navy">Rezervasyon Durumu</h2>
+            <p class="mb-4 text-xs text-muted">Duruma göre dağılım</p>
+            <div class="h-72">
+                <canvas id="bookingStatusChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!--SON HAREKETLER + EN ÇOK SATAN -->
+    <div class="grid gap-6 lg:grid-cols-3">
+
+        <!-- son rezervasyonlar -->
+        <div class="overflow-hidden rounded-card border border-line bg-white shadow-soft lg:col-span-2">
+            <div class="flex items-center justify-between border-b border-line px-6 py-4">
+                <h2 class="font-display text-lg font-bold text-navy">Son Rezervasyonlar</h2>
+                <a asp-area="Admin" asp-controller="Booking" asp-action="Index"
+                   class="text-xs font-semibold text-teal-dark hover:underline">Tümünü gör →</a>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="border-b border-line bg-cream/50">
+                        <tr>
+                            <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-muted">Rez. No</th>
+                            <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-muted">Müşteri</th>
+                            <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-muted">Tur</th>
+                            <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-muted">Durum</th>
+                            <th class="px-6 py-3 text-right text-xs font-bold uppercase tracking-wider text-muted">Tutar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.RecentBookings.Any())
+                        {
+                            <tr>
+                                <td colspan="5" class="px-6 py-10 text-center text-muted">Henüz rezervasyon yok.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var b in Model.RecentBookings)
+                            {
+                                <tr class="border-b border-line last:border-0 hover:bg-cream/30">
+                                    <td class="whitespace-nowrap px-6 py-4">
+                                        <a asp-area="Admin" asp-controller="Booking" asp-action="Detail" asp-route-id="@b.Id"
+                                           class="font-mono text-xs font-bold text-teal-dark hover:underline">@b.BookingNumber</a>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-navy">@b.MemberName</td>
+                                    <td class="px-6 py-4 text-sm text-muted">@b.TourTitle</td>
+                                    <td class="px-6 py-4">
+                                        @if (b.Status == "Onaylandı")
+                                        {
+                                            <span class="rounded-full bg-teal/12 px-3 py-1 text-xs font-semibold text-teal-dark">Onaylandı</span>
+                                        }
+                                        else if (b.Status == "İptal Edildi")
+                                        {
+                                            <span class="rounded-full bg-line px-3 py-1 text-xs font-semibold text-muted">İptal</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-600">Bekliyor</span>
+                                        }
+                                    </td>
+                                    <td class="whitespace-nowrap px-6 py-4 text-right font-display font-bold text-navy">
+                                        @b.TotalPrice.ToString("N2")
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- sağ sütun -->
+        <div class="space-y-6">
+
+            <!-- en çok satan turlar -->
+            <div class="rounded-card border border-line bg-white p-6 shadow-soft">
+                <h2 class="font-display text-lg font-bold text-navy">En Çok Satan Turlar</h2>
+                <p class="mb-4 text-xs text-muted">Rezervasyon sayısına göre</p>
+                <div class="h-64">
+                    <canvas id="topToursChart"></canvas>
+                </div>
+            </div>
+
+            <!-- bekleyen işler -->
+            <div class="rounded-card border border-line bg-white p-6 shadow-soft">
+                <h2 class="font-display text-lg font-bold text-navy">Bekleyen İşler</h2>
+
+                <div class="mt-4 space-y-3">
+                    <a asp-area="Admin" asp-controller="Review" asp-action="Index" asp-route-status="pending"
+                       class="flex items-center justify-between rounded-xl border border-line px-4 py-3 transition hover:border-navy">
+                        <span class="text-sm font-semibold text-navy">Onay bekleyen yorum</span>
+                        <span class="rounded-full @(Model.Summary.PendingReviews > 0 ? "bg-red-600 text-white" : "bg-line text-muted") px-2.5 py-0.5 text-xs font-bold">
+                            @Model.Summary.PendingReviews
+                        </span>
+                    </a>
+
+                    <a asp-area="Admin" asp-controller="Question" asp-action="Index"
+                       class="flex items-center justify-between rounded-xl border border-line px-4 py-3 transition hover:border-navy">
+                        <span class="text-sm font-semibold text-navy">Cevapsız soru</span>
+                        <span class="rounded-full @(Model.Summary.PendingQuestions > 0 ? "bg-red-600 text-white" : "bg-line text-muted") px-2.5 py-0.5 text-xs font-bold">
+                            @Model.Summary.PendingQuestions
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const navy  = '#0e2a3b';
+        const teal  = '#0fa3a3';
+        const line  = '#e7e2d8';
+        const muted = '#5d7180';
+
+        Chart.defaults.font.family = 'Inter, system-ui, sans-serif';
+        Chart.defaults.color = muted;
+
+        // ── Aylık ciro
+        new Chart(document.getElementById('monthlyRevenueChart'), {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.MonthlyRevenue.Select(x => x.Label))),
+                datasets: [{
+                    label: 'Ciro',
+                    data: @Html.Raw(Json.Serialize(Model.MonthlyRevenue.Select(x => x.Value))),
+                    backgroundColor: teal,
+                    borderRadius: 6,
+                    maxBarThickness: 48
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: line }, border: { display: false } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // ── Rezervasyon durumu
+        new Chart(document.getElementById('bookingStatusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.BookingStatus.Select(x => x.Label))),
+                datasets: [{
+                    data: @Html.Raw(Json.Serialize(Model.BookingStatus.Select(x => x.Value))),
+                    backgroundColor: [teal, '#f4a92c', navy, line],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '62%',
+                plugins: { legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true } } }
+            }
+        });
+
+        // ── En çok satan turlar
+        new Chart(document.getElementById('topToursChart'), {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.TopTours.Select(x => x.Label))),
+                datasets: [{
+                    label: 'Rezervasyon',
+                    data: @Html.Raw(Json.Serialize(Model.TopTours.Select(x => x.Value))),
+                    backgroundColor: navy,
+                    borderRadius: 6,
+                    maxBarThickness: 22
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { beginAtZero: true, grid: { color: line }, border: { display: false }, ticks: { precision: 0 } },
+                    y: { grid: { display: false } }
+                }
+            }
+        });
+
+    </script>
+}

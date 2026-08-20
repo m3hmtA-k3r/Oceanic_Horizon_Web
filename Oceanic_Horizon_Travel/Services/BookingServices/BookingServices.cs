@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Oceanic_Horizon_Travel.DTOs.BookingDtos;
 using Oceanic_Horizon_Travel.Entities;
@@ -6,6 +7,7 @@ using Oceanic_Horizon_Travel.Entities.SubDocuments;
 using Oceanic_Horizon_Travel.Services.MemberServices;
 using Oceanic_Horizon_Travel.Services.TourServices;
 using Oceanic_Horizon_Travel.Settings;
+using System.Text.RegularExpressions;
 
 namespace Oceanic_Horizon_Travel.Services.BookingServices
 {
@@ -29,7 +31,7 @@ namespace Oceanic_Horizon_Travel.Services.BookingServices
         }
         public async Task<string> CreateAsync(CreateBookingDto createBookingDto)
         {
-            var tour = await _tourServices.GetByIDAsync(createBookingDto.TourId);
+            var tour = await _tourServices.GetByIDAsync(createBookingDto.TourId!);
 
             if (tour == null)
                 throw new InvalidOperationException("Tur bulunamadı.");
@@ -183,9 +185,21 @@ namespace Oceanic_Horizon_Travel.Services.BookingServices
         }
 
 
+        public async Task<List<ResultBookingDto>> SearchAsync(string term)
+        {
+            if (string.IsNullOrWhiteSpace(term)) return new List<ResultBookingDto>();
 
+            var pattern = new BsonRegularExpression(Regex.Escape(term), "i");
+            var filter = Builders<Booking>.Filter.Regex(x => x.BookingNumber, pattern);
 
+            var bookings = await _bookingCollection
+                .Find(filter)
+                .SortByDescending(x => x.BookingDate)
+                .Limit(10)
+                .ToListAsync();
 
+            return await EnrichAsync(bookings);
+        }
 
         private static string GenerateBookingNumber()
         {

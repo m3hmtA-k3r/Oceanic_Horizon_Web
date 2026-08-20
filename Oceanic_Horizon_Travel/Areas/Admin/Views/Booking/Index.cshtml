@@ -1,0 +1,184 @@
+﻿@model List<Oceanic_Horizon_Travel.DTOs.BookingDtos.ResultBookingDto>
+
+@{
+    ViewData["Title"] = "Rezervasyonlar";
+
+    var activeStatus = ViewBag.ActiveStatus as string;
+    var pendingCount = (int)(ViewBag.PendingCount ?? 0);
+
+    var filters = new (string? Key, string Label)[]
+    {
+        (null, "Tümü"),
+        ("Bekliyor", "Bekleyenler"),
+        ("Onaylandı", "Onaylananlar"),
+        ("İptal Edildi", "İptal Edilenler")
+    };
+}
+
+<div>
+
+    <div class="mb-8">
+        <p class="font-display text-xs font-bold uppercase tracking-[0.22em] text-teal-dark">Yönetim</p>
+        <h1 class="mt-2 font-display text-3xl font-bold tracking-tight text-navy">Rezervasyonlar</h1>
+        <p class="mt-1 text-muted">
+            Tur rezervasyon talepleri.
+            @if (pendingCount > 0)
+            {
+                <span class="font-semibold text-red-600">@pendingCount talep onay bekliyor.</span>
+            }
+        </p>
+    </div>
+
+    @if (TempData["Success"] is not null)
+    {
+        <div class="mb-6 rounded-xl border border-teal/30 bg-teal/10 px-5 py-4 text-sm font-semibold text-teal-dark">
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] is not null)
+    {
+        <div class="mb-6 rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm font-semibold text-red-600">
+            @TempData["Error"]
+        </div>
+    }
+
+    <!--filtre-->
+    <div class="mb-6 flex flex-wrap gap-2">
+        @foreach (var f in filters)
+        {
+            var isActive = activeStatus == f.Key;
+
+            <a asp-action="Index" asp-route-status="@f.Key"
+               class="rounded-full border px-4 py-2 text-sm font-semibold transition @(isActive
+                                       ? "border-teal bg-teal text-white"
+                                       : "border-line bg-white text-navy hover:border-navy")">
+            @f.Label
+            @if (f.Key == "Bekliyor" && pendingCount > 0)
+                {
+                    <span class="ml-1.5 rounded-full bg-red-600 px-1.5 py-0.5 text-[0.65rem] font-bold text-white">@pendingCount</span>
+                }
+            </a>
+        }
+    </div>
+
+    <div class="overflow-hidden rounded-card border border-line bg-white shadow-soft">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="border-b border-line bg-cream/50">
+                    <tr>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Rez. No</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Tur</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Üye</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Kişi</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Tarih</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Tutar</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Durum</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Ödeme</th>
+                        <th class="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider text-muted">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model is null || !Model.Any())
+                    {
+                        <tr>
+                            <td colspan="9" class="px-6 py-12 text-center text-muted">
+                                Bu filtreye uyan rezervasyon yok.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var b in Model)
+                        {
+                            <tr class="border-b border-line last:border-0 hover:bg-cream/30 @(b.Status == "Bekliyor" ? "bg-red-50/40" : "")">
+
+                                <td class="whitespace-nowrap px-6 py-4">
+                                    <a asp-action="Detail" asp-route-id="@b.Id"
+                                       class="font-mono text-xs font-bold text-teal-dark hover:underline">
+                                        @b.BookingNumber
+                                    </a>
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <p class="text-sm font-semibold text-navy">@b.TourTitle</p>
+                                </td>
+
+                                <td class="px-6 py-4 text-sm text-muted">@b.MemberName</td>
+
+                                <td class="whitespace-nowrap px-6 py-4 text-sm text-navy">
+                                    @b.AdultCount yetişkin
+                                    @if (b.ChildCount > 0)
+                                    {
+                                        <span class="text-muted">· @b.ChildCount çocuk</span>
+                                    }
+                                </td>
+
+                                <td class="whitespace-nowrap px-6 py-4 text-sm text-muted">
+                                    @b.BookingDate.ToString("dd.MM.yyyy")
+                                </td>
+
+                                <td class="whitespace-nowrap px-6 py-4">
+                                    <span class="font-display font-bold text-navy">@b.TotalPrice.ToString("N2")</span>
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    @if (b.Status == "Onaylandı")
+                                    {
+                                        <span class="rounded-full bg-teal/12 px-3 py-1 text-xs font-semibold text-teal-dark">Onaylandı</span>
+                                    }
+                                    else if (b.Status == "İptal Edildi")
+                                    {
+                                        <span class="rounded-full bg-line px-3 py-1 text-xs font-semibold text-muted">İptal Edildi</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-600">Bekliyor</span>
+                                    }
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    @if (b.PaymentStatus == "Ödendi")
+                                    {
+                                        <span class="rounded-full bg-teal/12 px-3 py-1 text-xs font-semibold text-teal-dark">Ödendi</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="rounded-full bg-line px-3 py-1 text-xs font-semibold text-muted">Ödenmedi</span>
+                                    }
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-wrap justify-end gap-2">
+
+                                        @if (b.Status == "Bekliyor")
+                                        {
+                                            <a asp-action="Approve" asp-route-id="@b.Id"
+                                               class="rounded-full bg-teal px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-dark">
+                                                Onayla
+                                            </a>
+                                        }
+
+                                        @if (b.Status != "İptal Edildi")
+                                        {
+                                            <a asp-action="Cancel" asp-route-id="@b.Id"
+                                               onclick="return confirm('Rezervasyon iptal edilecek ve koltuklar kontenjana geri eklenecek. Emin misin?')"
+                                               class="rounded-full border border-line px-4 py-2 text-sm font-semibold text-red-600 transition hover:border-red-600">
+                                                İptal Et
+                                            </a>
+                                        }
+
+                                        <a asp-action="Detail" asp-route-id="@b.Id"
+                                           class="rounded-full border border-line px-4 py-2 text-sm font-semibold text-navy transition hover:border-navy">
+                                            Detay
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

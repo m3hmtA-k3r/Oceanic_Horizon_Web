@@ -1,5 +1,23 @@
-﻿@{
+﻿@using System
+@using Oceanic_Horizon_Travel.Services.DashboardServices
+@inject IDashboardServices DashboardServices
+
+
+@{
     var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+
+    Func<string, bool> isActive = name =>
+        string.Equals(controller, name, StringComparison.OrdinalIgnoreCase);
+
+    Func<string, string> navClass = name =>
+        isActive(name)
+            ? "mb-1 flex items-center gap-3 rounded-xl bg-teal px-3 py-2.5 text-sm font-semibold text-white shadow-sm shadow-teal/20"
+            : "mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/5 hover:text-white";
+
+    var userName = User.Identity?.Name ?? "";
+    var userInitial = string.IsNullOrWhiteSpace(userName) ? "?" : userName[..1].ToUpper();
+
+    var notifications = await DashboardServices.GetNotificationsAsync();
 }
 
 <!DOCTYPE html>
@@ -15,183 +33,336 @@
 
     <link rel="stylesheet" href="~/css/tailwind.css" asp-append-version="true" />
 </head>
-<body class="bg-cream font-body text-navy">
 
+<body class="bg-cream font-body text-navy">
     <div class="flex min-h-screen">
 
-        <!-- SIDEBAR -->
-        <aside class="fixed inset-y-0 left-0 z-40 flex w-[250px] flex-col bg-navy text-white">
+        <aside class="fixed inset-y-0 left-0 z-40 flex w-[260px] flex-col bg-navy text-white">
 
-            <!-- Logo -->
-            <div class="px-6 py-6">
+            <div class="border-b border-white/10 px-6 py-6">
                 <div class="flex items-center gap-2">
                     <span class="h-2.5 w-2.5 rounded-full bg-teal ring-4 ring-teal/20"></span>
                     <span class="font-display text-xl font-extrabold tracking-tight">Oceanic Horizon</span>
                 </div>
-                <p class="mt-1 pl-4.5 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-white/40">Admin Panel</p>
+                <p class="mt-1 pl-4.5 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-white/40">
+                    Yönetim Paneli
+                </p>
             </div>
 
-            <!-- Menü -->
             <nav class="flex-1 overflow-y-auto scrollbar-hide px-3 pb-4">
 
-                <p class="mb-2 mt-4 px-3 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-white/35">Yönetim</p>
+                <p class="mb-2 mt-4 px-3 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-white/35">
+                    Genel
+                </p>
 
-                <a href="#" class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/5 hover:text-white">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>
+                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"
+                   class="@navClass("Dashboard")">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1" />
+                        <rect x="14" y="3" width="7" height="7" rx="1" />
+                        <rect x="3" y="14" width="7" height="7" rx="1" />
+                        <rect x="14" y="14" width="7" height="7" rx="1" />
+                    </svg>
                     Dashboard
                 </a>
 
+                <a asp-area="Admin" asp-controller="Report" asp-action="Index"
+                   class="@navClass("Report")">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="16" y1="13" x2="8" y2="13" />
+                        <line x1="16" y1="17" x2="8" y2="17" />
+                    </svg>
+                    Raporlar
+                </a>
+
+                <p class="mb-2 mt-6 px-3 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-white/35">
+                    Satış Operasyonu
+                </p>
+
                 <a asp-area="Admin" asp-controller="Tour" asp-action="Index"
-                   class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition @(controller == "Tour" ? "bg-teal text-white" : "text-white/70 hover:bg-white/5 hover:text-white")">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /></svg>
+                   class="@navClass("Tour")">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="7" width="20" height="14" rx="2" />
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                    </svg>
                     Turlar
                 </a>
 
-                <a asp-area="Admin" asp-controller="Estate" asp-action="Index"
-                   class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition @(controller == "Estate" ? "bg-teal text-white" : "text-white/70 hover:bg-white/5 hover:text-white")">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
-                    Konaklamalar
-                </a>
-
                 <a asp-area="Admin" asp-controller="Booking" asp-action="Index"
-                   class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition @(controller == "Booking" ? "bg-teal text-white" : "text-white/70 hover:bg-white/5 hover:text-white")">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" /></svg>
+                   class="@navClass("Booking")">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 11l3 3L22 4" />
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                    </svg>
                     Rezervasyonlar
                 </a>
 
                 <a asp-area="Admin" asp-controller="Review" asp-action="Index"
-                   class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition @(controller == "Review" ? "bg-teal text-white" : "text-white/70 hover:bg-white/5 hover:text-white")">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+                   class="@navClass("Review")">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
                     Yorumlar
                 </a>
 
                 <a asp-area="Admin" asp-controller="Question" asp-action="Index"
-                   class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition @(controller == "Question" ? "bg-teal text-white" : "text-white/70 hover:bg-white/5 hover:text-white")">
+                   class="@navClass("Question")">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10" />
                         <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
                         <line x1="12" y1="17" x2="12.01" y2="17" />
                     </svg>
-                    Sorular
+                    Tur Soruları
                 </a>
 
-
-                <a asp-area="Admin" asp-controller="Member" asp-action="Index"
-                   class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition @(controller == "Member" ? "bg-teal text-white" : "text-white/70 hover:bg-white/5 hover:text-white")">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /></svg>
-                    Kullanıcılar
-                </a>
-
-                <p class="mb-2 mt-6 px-3 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-white/35">Katalog</p>
+                <p class="mb-2 mt-6 px-3 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-white/35">
+                    İçerik ve Katalog
+                </p>
 
                 <a asp-area="Admin" asp-controller="Category" asp-action="Index"
-                   class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition @(controller == "Category" ? "bg-teal text-white" : "text-white/70 hover:bg-white/5 hover:text-white")">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" /><line x1="7" y1="7" x2="7.01" y2="7" /></svg>
+                   class="@navClass("Category")">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                        <line x1="7" y1="7" x2="7.01" y2="7" />
+                    </svg>
                     Kategoriler
                 </a>
 
-
-                <a asp-area="Admin" asp-controller="Banner" asp-action="Index"
-                   class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition @(controller == "Banner" ? "bg-teal text-white" : "text-white/70 hover:bg-white/5 hover:text-white")">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>
-                    Bannerlar
-                </a>
-
                 <a asp-area="Admin" asp-controller="Destination" asp-action="Index"
-                   class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition @(controller == "Destination" ? "bg-teal text-white" : "text-white/70 hover:bg-white/5 hover:text-white")">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
+                   class="@navClass("Destination")">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                    </svg>
                     Destinasyonlar
                 </a>
 
-                <a asp-area="Admin" asp-controller="SiteSettings" asp-action="Index"
-                   class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition @(controller == "SiteSettings" ? "bg-teal text-white" : "text-white/70 hover:bg-white/5 hover:text-white")">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
-                    Site Yönetimi
+                <a asp-area="Admin" asp-controller="Banner" asp-action="Index"
+                   class="@navClass("Banner")">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <polyline points="21 15 16 10 5 21" />
+                    </svg>
+                    Bannerlar
                 </a>
 
-                <p class="mb-2 mt-6 px-3 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-white/35">Finans</p>
+                <p class="mb-2 mt-6 px-3 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-white/35">
+                    Finans
+                </p>
 
                 <a asp-area="Admin" asp-controller="Payment" asp-action="Index"
-                   class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition @(controller == "Payment" ? "bg-teal text-white" : "text-white/70 hover:bg-white/5 hover:text-white")">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" /><line x1="1" y1="10" x2="23" y2="10" /></svg>
+                   class="@navClass("Payment")">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="1" y="4" width="22" height="16" rx="2" />
+                        <line x1="1" y1="10" x2="23" y2="10" />
+                    </svg>
                     Ödemeler
                 </a>
+                                
+                <p class="mb-2 mt-6 px-3 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-white/35">
+                    Sistem
+                </p>
 
-                <a asp-area="Admin" asp-controller="Payout" asp-action="Index"
-                   class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition @(controller == "Payout" ? "bg-teal text-white" : "text-white/70 hover:bg-white/5 hover:text-white")">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" /><path d="M3 5v14a2 2 0 0 0 2 2h16v-5" /><path d="M18 12a2 2 0 0 0 0 4h4v-4z" /></svg>
-                    Host Ödemeleri
+                <a asp-area="Admin" asp-controller="Member" asp-action="Index"
+                   class="@navClass("Member")">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    </svg>
+                    Kullanıcılar
                 </a>
 
-                <p class="mb-2 mt-6 px-3 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-white/35">Diğer</p>
+                <a asp-area="Admin" asp-controller="SiteSettings" asp-action="Index"
+                   class="@navClass("SiteSettings")">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3" />
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    </svg>
+                    Site Ayarları
+                </a>
 
-                <a href="/" class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/5 hover:text-white">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5" /><polyline points="5 12 12 5 19 12" /></svg>
+                <p class="mb-2 mt-6 px-3 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-white/35">
+                    Teslim Sonrası
+                </p>
+
+                <div class="space-y-1 px-3 text-xs text-white/40">
+                    <p>Konaklama: Estate, Room, RoomAvailability</p>
+                    <p>Host Finans: Payout, Wallet</p>
+                </div>
+
+                <p class="mb-2 mt-6 px-3 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-white/35">
+                    Diğer
+                </p>
+
+                <a href="/"
+                   class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/5 hover:text-white">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="19" x2="12" y2="5" />
+                        <polyline points="5 12 12 5 19 12" />
+                    </svg>
                     Siteye Dön
                 </a>
 
                 <a asp-area="" asp-controller="Auth" asp-action="Logout"
                    class="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/5 hover:text-white">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
                     Çıkış Yap
                 </a>
             </nav>
 
-            <!-- Alt kullanıcı kartı -->
             <div class="border-t border-white/10 p-4">
                 <div class="flex items-center gap-3 rounded-xl bg-white/5 p-3">
                     <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-teal text-xs font-bold text-white">
-                        @(User.Identity!.Name?.Substring(0, 1).ToUpper() ?? "?")
+                        @userInitial
                     </span>
                     <div class="min-w-0">
-                        <p class="truncate text-sm font-semibold text-white">@User.Identity.Name</p>
+                        <p class="truncate text-sm font-semibold text-white">@User.Identity?.Name</p>
                         <p class="text-xs text-white/50">Yönetici</p>
                     </div>
                 </div>
             </div>
         </aside>
 
-        <!-- ANA ALAN -->
-        <div class="ml-[250px] flex-1">
+        <div class="ml-[260px] flex min-h-screen flex-1 flex-col">
 
-            <!-- TOPBAR -->
             <header class="sticky top-0 z-30 border-b border-line bg-white">
                 <div class="flex items-center gap-6 px-8 py-4">
-
-                    <h2 class="font-display text-lg font-bold text-navy">@ViewData["Title"]</h2>
-
-                    <div class="relative max-w-md flex-1">
-                        <svg class="absolute left-4 top-1/2 -translate-y-1/2 text-muted" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
-                        <input type="search" placeholder="Ara: rezervasyon, tur, kullanıcı..."
-                               class="w-full rounded-full border border-line bg-cream/40 py-2.5 pl-11 pr-4 text-sm text-navy placeholder:text-muted/70 focus:border-teal focus:bg-white focus:outline-none transition" />
+                    <div>
+                        <h1 class="font-display text-lg font-bold text-navy">
+                            @ViewData["Title"]
+                        </h1>
+                        <p class="text-xs text-muted">
+                            Oceanic Horizon Travel yönetim merkezi
+                        </p>
                     </div>
 
+                    <form asp-area="Admin" asp-controller="Search" asp-action="Index" method="get"
+                          class="relative max-w-md flex-1">
+                        <svg class="absolute left-4 top-1/2 -translate-y-1/2 text-muted" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                        <input type="search" name="q" value="@Context.Request.Query["q"]"
+                               placeholder="Tur, rezervasyon numarası veya kullanıcı ara..."
+                               class="w-full rounded-full border border-line bg-cream/40 py-2.5 pl-11 pr-4 text-sm text-navy placeholder:text-muted/70 transition focus:border-teal focus:bg-white focus:outline-none" />
+                    </form>
+
+
                     <div class="ml-auto flex items-center gap-4">
-                        <button type="button" class="relative grid h-10 w-10 place-items-center rounded-full border border-line text-muted transition hover:text-navy">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" /></svg>
-                        </button>
+                       <!--Burası Zil hatırlatması-->
+                        <div class="relative">
+                            <button type="button" id="notificationButton"
+                                    class="relative grid h-10 w-10 place-items-center rounded-full border border-line text-muted transition hover:text-navy">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                                </svg>
+
+                                @if (notifications.Total > 0)
+                                {
+                                    <span class="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1 text-[0.65rem] font-bold text-white">
+                                        @notifications.Total
+                                    </span>
+                                }
+                            </button>
+
+                            <div id="notificationPanel"
+                                 class="absolute right-0 top-12 z-50 hidden w-72 overflow-hidden rounded-card border border-line bg-white shadow-lift">
+
+                                <div class="border-b border-line px-4 py-3">
+                                    <p class="font-display text-sm font-bold text-navy">Bekleyen İşler</p>
+                                </div>
+
+                                @if (notifications.Total == 0)
+                                {
+                                    <p class="px-4 py-6 text-center text-sm text-muted">Bekleyen bir iş yok.</p>
+                                }
+                                else
+                                {
+                                    <div class="divide-y divide-line">
+
+                                        @if (notifications.PendingBookings > 0)
+                                        {
+                                            <a asp-area="Admin" asp-controller="Booking" asp-action="Index" asp-route-status="Bekliyor"
+                                               class="flex items-center justify-between px-4 py-3 transition hover:bg-cream/50">
+                                                <span class="text-sm text-navy">Onay bekleyen rezervasyon</span>
+                                                <span class="rounded-full bg-red-600 px-2 py-0.5 text-xs font-bold text-white">@notifications.PendingBookings</span>
+                                            </a>
+                                        }
+
+                                        @if (notifications.PendingReviews > 0)
+                                        {
+                                            <a asp-area="Admin" asp-controller="Review" asp-action="Index" asp-route-status="pending"
+                                               class="flex items-center justify-between px-4 py-3 transition hover:bg-cream/50">
+                                                <span class="text-sm text-navy">Onay bekleyen yorum</span>
+                                                <span class="rounded-full bg-red-600 px-2 py-0.5 text-xs font-bold text-white">@notifications.PendingReviews</span>
+                                            </a>
+                                        }
+
+                                        @if (notifications.PendingQuestions > 0)
+                                        {
+                                            <a asp-area="Admin" asp-controller="Question" asp-action="Index"
+                                               class="flex items-center justify-between px-4 py-3 transition hover:bg-cream/50">
+                                                <span class="text-sm text-navy">Cevapsız soru</span>
+                                                <span class="rounded-full bg-red-600 px-2 py-0.5 text-xs font-bold text-white">@notifications.PendingQuestions</span>
+                                            </a>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
 
                         <div class="flex items-center gap-3">
                             <div class="hidden text-right sm:block">
-                                <p class="text-sm font-semibold text-navy">@User.Identity.Name</p>
+                                <p class="text-sm font-semibold text-navy">@User.Identity?.Name</p>
                                 <p class="text-xs text-muted">Yönetici</p>
                             </div>
                             <span class="grid h-10 w-10 place-items-center rounded-full bg-navy text-xs font-bold text-white">
-                                @(User.Identity.Name?.Substring(0, 1).ToUpper() ?? "?")
+                                @userInitial
                             </span>
                         </div>
                     </div>
                 </div>
             </header>
 
-            <!-- İÇERİK -->
-            <main class="p-8">
+            <main class="flex-1 p-8">
                 @RenderBody()
             </main>
         </div>
     </div>
-    @await RenderSectionAsync("Scripts", required: false) <!--Tour formundaki JavaScript'in sayfaya basılması için gerekli Render işlemi.-->  
+
+    <script>
+        (function () {
+            const button = document.getElementById('notificationButton');
+            const panel = document.getElementById('notificationPanel');
+
+            button.addEventListener('click', function (e) {
+                e.stopPropagation();
+                panel.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', function () {
+                panel.classList.add('hidden');
+            });
+
+            panel.addEventListener('click', function (e) {
+                e.stopPropagation();
+            });
+        })();
+    </script>
+
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 
 </body>
 </html>

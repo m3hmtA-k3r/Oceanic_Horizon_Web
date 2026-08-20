@@ -1,0 +1,166 @@
+﻿@using System.Globalization
+@model Oceanic_Horizon_Travel.DTOs.SearchDtos.SearchResultViewModel
+
+@{
+    ViewData["Title"] = "Arama";
+    var culture = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+}
+
+<div>
+
+    <div class="mb-8">
+        <p class="font-display text-xs font-bold uppercase tracking-[0.22em] text-teal-dark">Arama</p>
+        <h1 class="mt-2 font-display text-3xl font-bold tracking-tight text-navy">
+            @if (string.IsNullOrWhiteSpace(Model.Query))
+            {
+                <text>Ne aramıştın?</text>
+            }
+            else
+            {
+                <text>&ldquo;@Model.Query&rdquo;</text>
+            }
+        </h1>
+        @if (!string.IsNullOrWhiteSpace(Model.Query))
+        {
+            <p class="mt-1 text-muted">@Model.TotalCount sonuç bulundu.</p>
+        }
+    </div>
+
+    @if (string.IsNullOrWhiteSpace(Model.Query))
+    {
+        <div class="rounded-card border border-line bg-white px-6 py-12 text-center shadow-soft">
+            <p class="text-muted">Üstteki kutuya tur adı, rezervasyon numarası veya kullanıcı bilgisi yaz.</p>
+        </div>
+    }
+    else if (Model.TotalCount == 0)
+    {
+        <div class="rounded-card border border-line bg-white px-6 py-12 text-center shadow-soft">
+            <p class="font-semibold text-navy">Sonuç bulunamadı.</p>
+            <p class="mt-1 text-sm text-muted">Farklı bir kelime deneyebilir ya da rezervasyon numarasının tamamını yazabilirsin.</p>
+        </div>
+    }
+    else
+    {
+        <div class="space-y-6">
+
+            <!-- ───────── TURLAR ───────── -->
+            @if (Model.Tours.Any())
+            {
+                <div class="overflow-hidden rounded-card border border-line bg-white shadow-soft">
+                    <div class="flex items-center justify-between border-b border-line px-6 py-4">
+                        <h2 class="font-display text-lg font-bold text-navy">Turlar</h2>
+                        <span class="rounded-full bg-teal/12 px-3 py-1 text-xs font-bold text-teal-dark">@Model.Tours.Count</span>
+                    </div>
+
+                    <div class="divide-y divide-line">
+                        @foreach (var tour in Model.Tours)
+                        {
+                            <a asp-area="Admin" asp-controller="Tour" asp-action="Update" asp-route-id="@tour.Id"
+                               class="flex items-center gap-4 px-6 py-4 transition hover:bg-cream/40">
+
+                                <img src="@tour.ThumbnailUrl" alt="@tour.Title.Get(culture)"
+                                     class="h-12 w-20 shrink-0 rounded-lg object-cover" />
+
+                                <div class="min-w-0 flex-1">
+                                    <p class="truncate font-semibold text-navy">@tour.Title.Get(culture)</p>
+                                    <p class="text-xs text-muted">@tour.Day gün · @tour.Night gece · @tour.BasePrice.ToString("N0") @tour.CurrencyType</p>
+                                </div>
+
+                                @if (tour.IsActive)
+                                {
+                                    <span class="rounded-full bg-teal/12 px-3 py-1 text-xs font-semibold text-teal-dark">Aktif</span>
+                                }
+                                else
+                                {
+                                    <span class="rounded-full bg-line px-3 py-1 text-xs font-semibold text-muted">Pasif</span>
+                                }
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- ───────── REZERVASYONLAR ───────── -->
+            @if (Model.Bookings.Any())
+            {
+                <div class="overflow-hidden rounded-card border border-line bg-white shadow-soft">
+                    <div class="flex items-center justify-between border-b border-line px-6 py-4">
+                        <h2 class="font-display text-lg font-bold text-navy">Rezervasyonlar</h2>
+                        <span class="rounded-full bg-teal/12 px-3 py-1 text-xs font-bold text-teal-dark">@Model.Bookings.Count</span>
+                    </div>
+
+                    <div class="divide-y divide-line">
+                        @foreach (var b in Model.Bookings)
+                        {
+                            <a asp-area="Admin" asp-controller="Booking" asp-action="Detail" asp-route-id="@b.Id"
+                               class="flex items-center gap-4 px-6 py-4 transition hover:bg-cream/40">
+
+                                <div class="min-w-0 flex-1">
+                                    <p class="font-mono text-xs font-bold text-teal-dark">@b.BookingNumber</p>
+                                    <p class="mt-0.5 truncate text-sm text-navy">@b.MemberName · @b.TourTitle</p>
+                                    <p class="text-xs text-muted">@b.BookingDate.ToString("dd.MM.yyyy")</p>
+                                </div>
+
+                                <span class="shrink-0 font-display font-bold text-navy">@b.TotalPrice.ToString("N2")</span>
+
+                                @if (b.Status == "Onaylandı")
+                                {
+                                    <span class="shrink-0 rounded-full bg-teal/12 px-3 py-1 text-xs font-semibold text-teal-dark">Onaylandı</span>
+                                }
+                                else if (b.Status == "İptal Edildi")
+                                {
+                                    <span class="shrink-0 rounded-full bg-line px-3 py-1 text-xs font-semibold text-muted">İptal</span>
+                                }
+                                else
+                                {
+                                    <span class="shrink-0 rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-600">Bekliyor</span>
+                                }
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- ───────── KULLANICILAR ───────── -->
+            @if (Model.Members.Any())
+            {
+                <div class="overflow-hidden rounded-card border border-line bg-white shadow-soft">
+                    <div class="flex items-center justify-between border-b border-line px-6 py-4">
+                        <h2 class="font-display text-lg font-bold text-navy">Kullanıcılar</h2>
+                        <span class="rounded-full bg-teal/12 px-3 py-1 text-xs font-bold text-teal-dark">@Model.Members.Count</span>
+                    </div>
+
+                    <div class="divide-y divide-line">
+                        @foreach (var m in Model.Members)
+                        {
+                            <a asp-area="Admin" asp-controller="Member" asp-action="Update" asp-route-id="@m.Id"
+                               class="flex items-center gap-4 px-6 py-4 transition hover:bg-cream/40">
+
+                                <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-navy text-xs font-bold text-white">
+                                    @(string.IsNullOrWhiteSpace(m.FirstName) ? "?" : m.FirstName[..1].ToUpper())
+                                </span>
+
+                                <div class="min-w-0 flex-1">
+                                    <p class="truncate font-semibold text-navy">@m.FirstName @m.LastName</p>
+                                    <p class="truncate text-xs text-muted">@m.Email</p>
+                                </div>
+
+                                <div class="flex shrink-0 gap-1">
+                                    @foreach (var role in m.Roles)
+                                    {
+                                        <span class="rounded-full bg-cream px-2.5 py-0.5 text-[0.65rem] font-bold text-muted">@role</span>
+                                    }
+                                </div>
+
+                                @if (!m.IsActive)
+                                {
+                                    <span class="shrink-0 rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-600">Pasif</span>
+                                }
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

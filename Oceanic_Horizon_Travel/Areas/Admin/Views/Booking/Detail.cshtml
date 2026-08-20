@@ -1,0 +1,255 @@
+﻿@model Oceanic_Horizon_Travel.DTOs.BookingDtos.DetailBookingDto
+
+@{
+    ViewData["Title"] = $"Rezervasyon {Model.BookingNumber}";
+}
+
+<div>
+
+    <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <div>
+            <p class="font-display text-xs font-bold uppercase tracking-[0.22em] text-teal-dark">Rezervasyon Detayı</p>
+            <h1 class="mt-2 font-display text-3xl font-bold tracking-tight text-navy">@Model.BookingNumber</h1>
+            <p class="mt-1 text-muted">@Model.BookingDate.ToString("dd MMMM yyyy, HH:mm") tarihinde oluşturuldu.</p>
+        </div>
+
+        <a asp-action="Index"
+           class="rounded-full border border-line px-6 py-3 font-semibold text-navy transition hover:border-navy">
+            ← Listeye Dön
+        </a>
+    </div>
+
+    @if (TempData["Success"] is not null)
+    {
+        <div class="mb-6 rounded-xl border border-teal/30 bg-teal/10 px-5 py-4 text-sm font-semibold text-teal-dark">
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] is not null)
+    {
+        <div class="mb-6 rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm font-semibold text-red-600">
+            @TempData["Error"]
+        </div>
+    }
+
+    <div class="grid gap-6 lg:grid-cols-3">
+
+        <!-- ───────── SOL: tur + misafirler ───────── -->
+        <div class="space-y-6 lg:col-span-2">
+
+            <!-- tur bilgisi -->
+            <div class="rounded-card border border-line bg-white p-6 shadow-soft">
+                <h2 class="font-display text-lg font-bold text-navy">Tur Bilgisi</h2>
+
+                <dl class="mt-4 grid gap-4 sm:grid-cols-2">
+                    <div>
+                        <dt class="text-xs font-bold uppercase tracking-wider text-muted">Tur</dt>
+                        <dd class="mt-1 font-semibold text-navy">@Model.TourTitle</dd>
+                    </div>
+
+                    <div>
+                        <dt class="text-xs font-bold uppercase tracking-wider text-muted">Kalkış — Dönüş</dt>
+                        <dd class="mt-1 font-semibold text-navy">
+                            @if (Model.StartDate.HasValue)
+                            {
+                                @($"{Model.StartDate:dd.MM.yyyy} — {Model.EndDate:dd.MM.yyyy}")
+                            }
+                            else
+                            {
+                                <span class="text-muted">Tarih bulunamadı</span>
+                            }
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt class="text-xs font-bold uppercase tracking-wider text-muted">Katılımcı</dt>
+                        <dd class="mt-1 font-semibold text-navy">
+                            @Model.AdultCount yetişkin
+                            @if (Model.ChildCount > 0)
+                            {
+                                <span class="text-muted">· @Model.ChildCount çocuk</span>
+                            }
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt class="text-xs font-bold uppercase tracking-wider text-muted">Toplam Tutar</dt>
+                        <dd class="mt-1 font-display text-xl font-bold text-navy">@Model.TotalPrice.ToString("N2")</dd>
+                    </div>
+                </dl>
+            </div>
+
+            <!-- misafirler -->
+            <div class="overflow-hidden rounded-card border border-line bg-white shadow-soft">
+                <div class="border-b border-line px-6 py-4">
+                    <h2 class="font-display text-lg font-bold text-navy">
+                        Misafirler
+                        <span class="ml-1 text-sm font-semibold text-muted">(@Model.Guests.Count kişi)</span>
+                    </h2>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="border-b border-line bg-cream/50">
+                            <tr>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-muted">Ad Soyad</th>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-muted">Kimlik / Pasaport</th>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-muted">Doğum Tarihi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!Model.Guests.Any())
+                            {
+                                <tr>
+                                    <td colspan="3" class="px-6 py-10 text-center text-muted">
+                                        Misafir bilgisi girilmemiş.
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var g in Model.Guests)
+                                {
+                                    <tr class="border-b border-line last:border-0">
+                                        <td class="px-6 py-4 font-semibold text-navy">@g.FirstName @g.LastName</td>
+                                        <td class="px-6 py-4 font-mono text-sm text-muted">@g.IdentityNumber</td>
+                                        <td class="px-6 py-4 text-sm text-muted">@g.BirthDate.ToString("dd.MM.yyyy")</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- kalemler -->
+            <div class="overflow-hidden rounded-card border border-line bg-white shadow-soft">
+                <div class="border-b border-line px-6 py-4">
+                    <h2 class="font-display text-lg font-bold text-navy">Rezervasyon Kalemleri</h2>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="border-b border-line bg-cream/50">
+                            <tr>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-muted">Tür</th>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-muted">Açıklama</th>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-muted">Adet</th>
+                                <th class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-muted">Birim</th>
+                                <th class="px-6 py-3 text-right text-xs font-bold uppercase tracking-wider text-muted">Ara Toplam</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Items)
+                            {
+                                <tr class="border-b border-line last:border-0">
+                                    <td class="px-6 py-4">
+                                        <span class="rounded-full bg-teal/12 px-3 py-1 text-xs font-semibold text-teal-dark">@item.Type</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm font-semibold text-navy">@item.Title</td>
+                                    <td class="px-6 py-4 text-sm text-muted">@item.Quantity</td>
+                                    <td class="px-6 py-4 text-sm text-muted">@item.UnitPrice.ToString("N2")</td>
+                                    <td class="px-6 py-4 text-right font-semibold text-navy">@item.Subtotal.ToString("N2")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SAĞ: durum + müşteri -->
+        <div class="space-y-6">
+
+            
+            <div class="rounded-card border border-line bg-white p-6 shadow-soft">
+                <h2 class="font-display text-lg font-bold text-navy">Durum</h2>
+
+                <div class="mt-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-muted">Rezervasyon</span>
+                        @if (Model.Status == "Onaylandı")
+                        {
+                            <span class="rounded-full bg-teal/12 px-3 py-1 text-xs font-semibold text-teal-dark">Onaylandı</span>
+                        }
+                        else if (Model.Status == "İptal Edildi")
+                        {
+                            <span class="rounded-full bg-line px-3 py-1 text-xs font-semibold text-muted">İptal Edildi</span>
+                        }
+                        else
+                        {
+                            <span class="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-600">Bekliyor</span>
+                        }
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-muted">Ödeme</span>
+                        @if (Model.PaymentStatus == "Ödendi")
+                        {
+                            <span class="rounded-full bg-teal/12 px-3 py-1 text-xs font-semibold text-teal-dark">Ödendi</span>
+                        }
+                        else
+                        {
+                            <span class="rounded-full bg-line px-3 py-1 text-xs font-semibold text-muted">Ödenmedi</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="mt-6 space-y-2">
+                    @if (Model.Status == "Bekliyor")
+                    {
+                        <a asp-action="Approve" asp-route-id="@Model.Id"
+                           class="block rounded-full bg-teal px-6 py-3 text-center font-semibold text-white transition hover:bg-teal-dark">
+                            Rezervasyonu Onayla
+                        </a>
+                    }
+
+                    @if (Model.PaymentStatus != "Ödendi" && Model.Status != "İptal Edildi")
+                    {
+                        <a asp-action="MarkAsPaid" asp-route-id="@Model.Id"
+                           onclick="return confirm('@Model.TotalPrice.ToString("N2") tutarında ödeme kaydı oluşturulacak. Onaylıyor musun?')"
+                           class="block rounded-full border border-teal px-6 py-3 text-center font-semibold text-teal-dark transition hover:bg-teal/10">
+                            Ödeme Alındı Olarak İşaretle
+                        </a>
+                    }
+
+                    @if (Model.Status != "İptal Edildi")
+                    {
+                        <a asp-action="Cancel" asp-route-id="@Model.Id"
+                           onclick="return confirm('Rezervasyon iptal edilecek ve koltuklar kontenjana geri eklenecek. Emin misin?')"
+                           class="block rounded-full border border-line px-6 py-3 text-center font-semibold text-red-600 transition hover:border-red-600">
+                            İptal Et
+                        </a>
+                    }
+                </div>
+            </div>
+
+            <!-- User kart -->
+            <div class="rounded-card border border-line bg-white p-6 shadow-soft">
+                <h2 class="font-display text-lg font-bold text-navy">Müşteri</h2>
+
+                <dl class="mt-4 space-y-4">
+                    <div>
+                        <dt class="text-xs font-bold uppercase tracking-wider text-muted">Ad Soyad</dt>
+                        <dd class="mt-1 font-semibold text-navy">@Model.MemberName</dd>
+                    </div>
+
+                    <div>
+                        <dt class="text-xs font-bold uppercase tracking-wider text-muted">E-posta</dt>
+                        <dd class="mt-1 text-sm text-navy">
+                            <a href="mailto:@Model.MemberEmail" class="text-teal-dark hover:underline">@Model.MemberEmail</a>
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt class="text-xs font-bold uppercase tracking-wider text-muted">Telefon</dt>
+                        <dd class="mt-1 text-sm text-navy">
+                            <a href="tel:@Model.MemberPhone" class="text-teal-dark hover:underline">@Model.MemberPhone</a>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>

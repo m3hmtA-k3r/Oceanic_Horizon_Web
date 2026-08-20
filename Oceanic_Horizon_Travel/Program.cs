@@ -4,11 +4,15 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Options;
 using Oceanic_Horizon_Travel.Services.BannerServices;
+using Oceanic_Horizon_Travel.Services.BookingServices;
 using Oceanic_Horizon_Travel.Services.CategoryServices;
+using Oceanic_Horizon_Travel.Services.DashboardServices;
 using Oceanic_Horizon_Travel.Services.DestinationServices;
 using Oceanic_Horizon_Travel.Services.FileServices;
 using Oceanic_Horizon_Travel.Services.MemberServices;
+using Oceanic_Horizon_Travel.Services.PaymentServices;
 using Oceanic_Horizon_Travel.Services.QuestionServices;
+using Oceanic_Horizon_Travel.Services.ReportServices;
 using Oceanic_Horizon_Travel.Services.ReviewServices;
 using Oceanic_Horizon_Travel.Services.SiteSettingsServices;
 using Oceanic_Horizon_Travel.Services.TourServices;
@@ -16,6 +20,8 @@ using Oceanic_Horizon_Travel.Settings;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
@@ -43,6 +49,12 @@ builder.Services.AddScoped<ICategoryServices, CategoryServices>();
 builder.Services.AddScoped<ISiteSettingsServices, SiteSettingsServices>();
 builder.Services.AddScoped<IQuestionServices, QuestionServices>();
 builder.Services.AddScoped<IReviewServices, ReviewServices>();
+builder.Services.AddScoped<IBookingServices, BookingServices>();
+builder.Services.AddScoped<IPaymentServices, PaymentServices>();
+builder.Services.AddScoped<IDashboardServices, DashboardServices>();
+builder.Services.AddScoped<IReportServices, ReportServices>();
+
+
 
 
 

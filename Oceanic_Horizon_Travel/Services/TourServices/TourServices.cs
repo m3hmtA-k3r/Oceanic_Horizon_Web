@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using Oceanic_Horizon_Travel.DTOs.TourDtos;
 using Oceanic_Horizon_Travel.Entities;
 using Oceanic_Horizon_Travel.Settings;
+using System.Text.RegularExpressions;
 
 namespace Oceanic_Horizon_Travel.Services.TourServices
 {
@@ -85,10 +87,28 @@ namespace Oceanic_Horizon_Travel.Services.TourServices
                 Builders<Tour>.Filter.ElemMatch(x => x.TourDates, d => d.Id == tourDateId)
             );
 
-            var update = Builders<Tour>.Update.Inc(x => x.TourDates[-1].AvailableSeats, delta);
+            var update = Builders<Tour>.Update.Inc(x => x.TourDates.FirstMatchingElement().AvailableSeats, delta);
+
 
             await _tourCollection.UpdateOneAsync(filter, update);
         }
 
+        public async Task<List<ResultTourDto>> SearchAsync(string term)
+        {
+            if (string.IsNullOrWhiteSpace(term)) return new List<ResultTourDto>();
+
+            // Kullanıcının yazdığı metni düz metin olarak ara
+            var pattern = new BsonRegularExpression(Regex.Escape(term), "i");
+
+            var filter = Builders<Tour>.Filter.Or(
+                Builders<Tour>.Filter.Regex(x => x.Title.Tr, pattern),
+                Builders<Tour>.Filter.Regex(x => x.Title.En, pattern),
+                Builders<Tour>.Filter.Regex(x => x.Title.Pt, pattern),
+                Builders<Tour>.Filter.Regex(x => x.SeoUrl, pattern)
+            );
+
+            var tours = await _tourCollection.Find(filter).Limit(10).ToListAsync();
+            return _mapper.Map<List<ResultTourDto>>(tours);
+        }
     }
 }

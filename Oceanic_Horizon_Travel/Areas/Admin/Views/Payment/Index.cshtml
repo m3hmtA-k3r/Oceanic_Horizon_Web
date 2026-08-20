@@ -1,0 +1,102 @@
+﻿@model List<Oceanic_Horizon_Travel.Entities.Payment>
+
+@{
+    ViewData["Title"] = "Ödemeler";
+    var totalRevenue = (decimal)(ViewBag.TotalRevenue ?? 0m);
+}
+
+<div>
+
+    <div class="mb-8">
+        <p class="font-display text-xs font-bold uppercase tracking-[0.22em] text-teal-dark">Finans</p>
+        <h1 class="mt-2 font-display text-3xl font-bold tracking-tight text-navy">Ödemeler</h1>
+        <p class="mt-1 text-muted">Rezervasyonlardan tahsil edilen tutarlar.</p>
+    </div>
+
+    <!-- ciro kartı -->
+    <div class="mb-6 grid gap-4 sm:grid-cols-3">
+        <div class="rounded-card border border-line bg-white p-6 shadow-soft">
+            <p class="text-xs font-bold uppercase tracking-wider text-muted">Toplam Ciro</p>
+            <p class="mt-2 font-display text-3xl font-bold text-navy">@totalRevenue.ToString("N2")</p>
+        </div>
+
+        <div class="rounded-card border border-line bg-white p-6 shadow-soft">
+            <p class="text-xs font-bold uppercase tracking-wider text-muted">İşlem Sayısı</p>
+            <p class="mt-2 font-display text-3xl font-bold text-navy">@Model.Count</p>
+        </div>
+
+        <div class="rounded-card border border-line bg-white p-6 shadow-soft">
+            <p class="text-xs font-bold uppercase tracking-wider text-muted">Ortalama Tutar</p>
+            <p class="mt-2 font-display text-3xl font-bold text-navy">
+                @(Model.Any() ? Model.Average(x => x.Amount).ToString("N2") : "0,00")
+            </p>
+        </div>
+    </div>
+
+    <div class="overflow-hidden rounded-card border border-line bg-white shadow-soft">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="border-b border-line bg-cream/50">
+                    <tr>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">İşlem No</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Rezervasyon</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Yöntem</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Tarih</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Durum</th>
+                        <th class="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider text-muted">Tutar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center text-muted">
+                                Henüz ödeme kaydı yok.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var p in Model)
+                        {
+                            <tr class="border-b border-line last:border-0 hover:bg-cream/30">
+
+                                <td class="whitespace-nowrap px-6 py-4 font-mono text-xs font-bold text-navy">
+                                    @p.TransactionNumber
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <a asp-area="Admin" asp-controller="Booking" asp-action="Detail" asp-route-id="@p.BookingId"
+                                       class="text-sm font-semibold text-teal-dark hover:underline">
+                                        Rezervasyona git →
+                                    </a>
+                                </td>
+
+                                <td class="px-6 py-4 text-sm text-muted">@p.PaymentMethod</td>
+
+                                <td class="whitespace-nowrap px-6 py-4 text-sm text-muted">
+                                    @p.CreatedDate.ToString("dd.MM.yyyy HH:mm")
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    @if (p.Status == "Başarılı")
+                                    {
+                                        <span class="rounded-full bg-teal/12 px-3 py-1 text-xs font-semibold text-teal-dark">Başarılı</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-600">@p.Status</span>
+                                    }
+                                </td>
+
+                                <td class="whitespace-nowrap px-6 py-4 text-right">
+                                    <span class="font-display font-bold text-navy">@p.Amount.ToString("N2")</span>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

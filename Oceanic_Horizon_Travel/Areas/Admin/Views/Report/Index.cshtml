@@ -1,0 +1,115 @@
+﻿@model Oceanic_Horizon_Travel.DTOs.ReportDtos.ParticipantReportViewModel
+
+@{
+    ViewData["Title"] = "Raporlar";
+    var hasSelection = !string.IsNullOrWhiteSpace(Model.SelectedTourDateId);
+}
+
+<div>
+
+    <div class="mb-8">
+        <p class="font-display text-xs font-bold uppercase tracking-[0.22em] text-teal-dark">Finans</p>
+        <h1 class="mt-2 font-display text-3xl font-bold tracking-tight text-navy">Katılımcı Raporu</h1>
+        <p class="mt-1 text-muted">Bir kalkış tarihi seç, o kalkıştaki tüm katılımcıları listele ve indir.</p>
+    </div>
+
+    <!-- seçim -->
+    <div class="mb-6 rounded-card border border-line bg-white p-6 shadow-soft">
+        <form asp-action="Index" method="get" class="flex flex-wrap items-end gap-4">
+
+            <div class="min-w-72 flex-1">
+                <label class="mb-2 block text-xs font-bold uppercase tracking-wider text-muted">Kalkış Tarihi</label>
+                <select name="tourDateId" onchange="this.form.submit()"
+                        class="w-full rounded-xl border border-line bg-cream/40 px-4 py-2.5 text-sm text-navy focus:border-teal focus:bg-white focus:outline-none">
+                    <option value="">— Seçiniz —</option>
+                    @foreach (var tour in Model.Tours)
+                    {
+                        @foreach (var date in tour.TourDates.OrderBy(d => d.StartDate))
+                        {
+                            <option value="@date.Id" selected="@(date.Id == Model.SelectedTourDateId)">
+                                @tour.Title.Tr — @date.StartDate.ToString("dd.MM.yyyy")
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+
+            @if (hasSelection && Model.Participants.Any())
+            {
+                <a asp-action="ExportExcel" asp-route-tourDateId="@Model.SelectedTourDateId"
+                   class="rounded-full bg-teal px-6 py-3 font-semibold text-white transition hover:bg-teal-dark">
+                    Excel İndir
+                </a>
+
+                <a asp-action="ExportPdf" asp-route-tourDateId="@Model.SelectedTourDateId"
+                   class="rounded-full border border-navy px-6 py-3 font-semibold text-navy transition hover:bg-navy hover:text-white">
+                    PDF İndir
+                </a>
+            }
+        </form>
+    </div>
+
+    @if (!hasSelection)
+    {
+        <div class="rounded-card border border-line bg-white px-6 py-12 text-center shadow-soft">
+            <p class="text-muted">Yukarıdan bir kalkış tarihi seç.</p>
+        </div>
+    }
+    else
+    {
+        <!-- özet -->
+        <div class="mb-6 rounded-card border border-line bg-white p-6 shadow-soft">
+            <h2 class="font-display text-lg font-bold text-navy">@Model.TourTitle</h2>
+            @if (Model.StartDate.HasValue)
+            {
+                <p class="mt-1 text-sm text-muted">
+                    @Model.StartDate.Value.ToString("dd MMMM yyyy") — @Model.EndDate!.Value.ToString("dd MMMM yyyy")
+                </p>
+            }
+            <p class="mt-3 font-display text-2xl font-bold text-teal-dark">@Model.Participants.Count katılımcı</p>
+        </div>
+
+        <!-- liste -->
+        <div class="overflow-hidden rounded-card border border-line bg-white shadow-soft">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="border-b border-line bg-cream/50">
+                        <tr>
+                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">#</th>
+                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Ad Soyad</th>
+                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Kimlik / Pasaport</th>
+                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Doğum Tarihi</th>
+                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Rezervasyon</th>
+                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Rezervasyonu Yapan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Participants.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="px-6 py-12 text-center text-muted">
+                                    Bu kalkışta katılımcı kaydı yok. Rezervasyonlarda misafir bilgisi girilmemiş olabilir.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            var i = 1;
+                            @foreach (var p in Model.Participants)
+                            {
+                                <tr class="border-b border-line last:border-0 hover:bg-cream/30">
+                                    <td class="px-6 py-4 text-sm text-muted">@(i++)</td>
+                                    <td class="px-6 py-4 font-semibold text-navy">@p.FullName</td>
+                                    <td class="px-6 py-4 font-mono text-sm text-muted">@p.IdentityNumber</td>
+                                    <td class="px-6 py-4 text-sm text-muted">@p.BirthDate.ToString("dd.MM.yyyy")</td>
+                                    <td class="px-6 py-4 font-mono text-xs font-bold text-teal-dark">@p.BookingNumber</td>
+                                    <td class="px-6 py-4 text-sm text-muted">@p.BookedBy</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

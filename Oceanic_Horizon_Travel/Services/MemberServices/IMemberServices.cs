@@ -19,5 +19,8 @@ namespace Oceanic_Horizon_Travel.Services.MemberServices
 
         Task<List<ResultMemberDto>> GetByIdsAsync(List<string> ids); // Toplu çekme metotları 
 
+        Task<List<ResultMemberDto>> SearchAsync(string term);   // ad, soyad, e-posta
+
+
     }
 }

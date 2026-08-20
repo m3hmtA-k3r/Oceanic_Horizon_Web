@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Oceanic_Horizon_Travel.DTOs.MemberDtos;
 using Oceanic_Horizon_Travel.Entities;
 using Oceanic_Horizon_Travel.Settings;
+using System.Text.RegularExpressions;
 
 namespace Oceanic_Horizon_Travel.Services.MemberServices
 { 
@@ -89,5 +91,22 @@ namespace Oceanic_Horizon_Travel.Services.MemberServices
 
             return _mapper.Map<List<ResultMemberDto>>(members);
         }
+
+        public async Task<List<ResultMemberDto>> SearchAsync(string term)
+        {
+            if (string.IsNullOrWhiteSpace(term)) return new List<ResultMemberDto>();
+
+            var pattern = new BsonRegularExpression(Regex.Escape(term), "i");
+
+            var filter = Builders<Member>.Filter.Or(
+                Builders<Member>.Filter.Regex(x => x.FirstName, pattern),
+                Builders<Member>.Filter.Regex(x => x.LastName, pattern),
+                Builders<Member>.Filter.Regex(x => x.Email, pattern)
+            );
+
+            var members = await _memberCollection.Find(filter).Limit(10).ToListAsync();
+            return _mapper.Map<List<ResultMemberDto>>(members);
+        }
+
     }
 }
