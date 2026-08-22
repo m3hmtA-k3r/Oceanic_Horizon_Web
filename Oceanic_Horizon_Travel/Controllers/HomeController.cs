@@ -1,32 +1,45 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Oceanic_Horizon_Travel.DTOs.TourDtos;
 using Oceanic_Horizon_Travel.Models;
+using Oceanic_Horizon_Travel.Services.DestinationServices;
+using Oceanic_Horizon_Travel.Services.MemberServices;
+using Oceanic_Horizon_Travel.Services.ReviewServices;
+using Oceanic_Horizon_Travel.Services.TourServices;
 
 namespace Oceanic_Horizon_Travel.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController(
+        ITourServices _tourServices,
+        IDestinationServices _destinationServices,
+        IReviewServices _reviewServices,
+        IMemberServices _memberServices) : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        public async Task<IActionResult> Index()
         {
-            _logger = logger;
+            var (allTours, tourCount) = await _tourServices.GetFilteredAsync(new TourFilterDto());
+            var destinations = await _destinationServices.GetAllAsync();
+            var members = await _memberServices.GetAllAsync();
+            var reviews = await _reviewServices.GetAllAsync("approved");
+
+            var model = new HomeViewModel
+            {
+                FeaturedTours = await _tourServices.GetFeaturedAsync(6),
+                Destinations = destinations.Where(x => x.IsActive).Take(4).ToList(),
+                Reviews = reviews.Take(3).ToList(),
+
+                TotalTours = tourCount,
+                TotalDestinations = destinations.Count(x => x.IsActive),
+                TotalMembers = members.Count
+            };
+
+            return View(model);
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        public IActionResult Privacy() => View();
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+            => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

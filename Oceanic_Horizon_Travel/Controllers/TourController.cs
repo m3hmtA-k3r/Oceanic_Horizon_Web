@@ -5,7 +5,10 @@ using Oceanic_Horizon_Travel.Services.DestinationServices;
 using Oceanic_Horizon_Travel.Services.QuestionServices;
 using Oceanic_Horizon_Travel.Services.ReviewServices;
 using Oceanic_Horizon_Travel.Services.TourServices;
-using System.Threading.Tasks;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Oceanic_Horizon_Travel.DTOs.QuestionDtos;
+using Oceanic_Horizon_Travel.DTOs.ReviewDtos;
 
 namespace Oceanic_Horizon_Travel.Controllers
 {
@@ -60,6 +63,59 @@ namespace Oceanic_Horizon_Travel.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> AddReview(string seoUrl, string tourId, int rating, string comment)
+        {
+            var memberId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(memberId))
+                return RedirectToAction("Login", "Auth");
+
+            if (rating < 1 || rating > 5 || string.IsNullOrWhiteSpace(comment))
+            {
+                TempData["FormError"] = "Puan ve yorum alanları zorunlu.";
+                return RedirectToAction(nameof(Detail), new { id = seoUrl });
+            }
+
+            await _reviewService.CreateAsync(new CreateReviewDto
+            {
+                MemberId = memberId,
+                Type = "Tour",
+                EntityId = tourId,
+                Rating = rating,
+                Comment = comment.Trim()
+            });
+
+            TempData["FormSuccess"] = "Değerlendirmen alındı. Onaylandıktan sonra yayınlanacak.";
+            return RedirectToAction(nameof(Detail), new { id = seoUrl });
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> AddQuestion(string seoUrl, string tourId, string text)
+        {
+            var memberId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(memberId))
+                return RedirectToAction("Login", "Auth");
+
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                TempData["FormError"] = "Soru alanı boş bırakılamaz.";
+                return RedirectToAction(nameof(Detail), new { id = seoUrl });
+            }
+
+            await _questionServices.CreateAsync(new CreateQuestionDto
+            {
+                TourId = tourId,
+                MemberId = memberId,
+                Text = text.Trim()
+            });
+
+            TempData["FormSuccess"] = "Sorun iletildi. Cevaplandığında bu sayfada görünecek.";
+            return RedirectToAction(nameof(Detail), new { id = seoUrl });
+        }
 
 
     }

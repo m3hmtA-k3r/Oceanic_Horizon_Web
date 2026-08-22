@@ -23,6 +23,7 @@ namespace Oceanic_Horizon_Travel.Services.TourServices
 
         Task<ResultTourDto?> GetByTourDateIdAsync(string tourDateId); //Rezervasyon akışı
 
+        Task<List<ResultTourDto>> GetFeaturedAsync(int count);
 
     }
 }

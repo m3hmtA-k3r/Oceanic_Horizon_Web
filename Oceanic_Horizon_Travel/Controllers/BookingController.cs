@@ -25,7 +25,7 @@ namespace Oceanic_Horizon_Travel.Controllers
             }
 
 
-            return View();
+            return View(model);
         }
 
 
@@ -41,7 +41,7 @@ namespace Oceanic_Horizon_Travel.Controllers
 
             try
             {
-                var BookingNumber = await _bookingServices.CreateAsync(new CreateBookingDto
+                var bookingNumber = await _bookingServices.CreateAsync(new CreateBookingDto
                 {
                     MemberId = memberId,
                     TourId = form.TourId,
@@ -51,7 +51,7 @@ namespace Oceanic_Horizon_Travel.Controllers
                     Guests = form.Guests ?? new List<Guest>()
                 });
 
-                return RedirectToAction(nameof(Success), new { BookingNumber });
+                return RedirectToAction(nameof(Success), new { bookingNumber });
             }
             catch(InvalidOperationException ex)
             {                

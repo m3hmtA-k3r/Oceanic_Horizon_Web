@@ -53,6 +53,20 @@
 </section>
 
 <div class="mx-auto max-w-7xl px-6 py-12">
+    @if (TempData["FormSuccess"] is not null)
+    {
+        <div class="mb-6 rounded-xl border border-teal/30 bg-teal/10 px-5 py-4 text-sm font-semibold text-teal-dark">
+            @TempData["FormSuccess"]
+        </div>
+    }
+
+    @if (TempData["FormError"] is not null)
+    {
+        <div class="mb-6 rounded-xl border border-danger-line bg-danger/10 px-5 py-4 text-sm font-semibold text-danger">
+            @TempData["FormError"]
+        </div>
+    }
+
     <div class="grid gap-8 lg:grid-cols-3">
 
         <!-- sol sütün-->
@@ -209,103 +223,89 @@
             }
 
 
-            <!-- Yorumlar -->
-            <div class="rounded-card border border-line bg-white p-6 shadow-soft">
-                <h2 class="font-display text-xl font-bold text-navy">Değerlendirmeler</h2>
-
-                @if (totalReviews == 0)
+            
+            <!-- yorum formu -->
+            <div class="mt-8 border-t border-line pt-6">
+                @if (User.Identity!.IsAuthenticated)
                 {
-                    <p class="mt-4 text-muted">Bu tur için henüz değerlendirme yapılmamış.</p>
-                }
-                else
-                {
-                    <div class="mt-5 grid gap-8 sm:grid-cols-3">
+                    <h3 class="font-display text-lg font-bold text-navy">Değerlendirmeni Paylaş</h3>
+                    <p class="mt-1 text-sm text-muted">Yorumun yönetici onayından sonra yayınlanır.</p>
 
-                        <div class="text-center sm:border-r sm:border-line">
-                            <p class="font-display text-5xl font-extrabold text-navy">@t.Rating.ToString("0.0")</p>
-                            <p class="mt-1 text-star">
+                    <form asp-action="AddReview" method="post" class="mt-5 space-y-4">
+                        <input type="hidden" name="seoUrl" value="@t.SeoUrl" />
+                        <input type="hidden" name="tourId" value="@t.Id" />
+
+                        <div>
+                            <label class="mb-2 block text-xs font-bold uppercase tracking-wider text-muted">Puanın</label>
+                            <div class="flex gap-1.5" id="starPicker">
                                 @for (int i = 1; i <= 5; i++)
                                 {
-                                    @(i <= Math.Round(t.Rating) ? "★" : "☆")
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="rating" value="@i" class="peer sr-only" required />
+                                        <span class="grid h-11 w-11 place-items-center rounded-xl border border-line text-lg text-muted transition peer-checked:border-star peer-checked:bg-star/10 peer-checked:text-star hover:border-star">
+                                            @i
+                                        </span>
+                                    </label>
                                 }
-                            </p>
-                            <p class="mt-1 text-xs text-muted">@totalReviews değerlendirme</p>
-                        </div>
-
-                        <div class="space-y-1.5 sm:col-span-2">
-                            @for (int star = 5; star >= 1; star--)
-                            {
-                                var count = Model.RatingDistribution.GetValueOrDefault(star, 0);
-                                var percent = totalReviews == 0 ? 0 : (int)Math.Round(count * 100.0 / totalReviews);
-
-                                <div class="flex items-center gap-3 text-xs">
-                                    <span class="w-10 shrink-0 text-muted">@star yıldız</span>
-                                    <div class="h-2 flex-1 overflow-hidden rounded-full bg-line">
-                                        <div class="h-full rounded-full bg-star" style="width:@(percent)%"></div>
-                                    </div>
-                                    <span class="w-10 shrink-0 text-right font-semibold text-navy">%@percent</span>
-                                </div>
-                            }
-                        </div>
-                    </div>
-
-                    <div class="mt-6 divide-y divide-line border-t border-line">
-                        @foreach (var r in Model.Reviews)
-                        {
-                            <div class="py-5">
-                                <div class="flex items-center justify-between">
-                                    <p class="font-semibold text-navy">@r.MemberName</p>
-                                    <span class="text-xs text-muted">@r.CreatedDate.ToString("dd.MM.yyyy")</span>
-                                </div>
-                                <p class="mt-1 text-star">
-                                    @for (int i = 1; i <= 5; i++)
-                                    {
-                                        @(i <= r.Rating ? "★" : "☆")
-                                    }
-                                </p>
-                                <p class="mt-2 leading-relaxed text-muted">@r.Comment</p>
                             </div>
-                        }
-                    </div>
-                }
-            </div>
+                            <p class="mt-1.5 text-xs text-muted">1 = kötü · 5 = mükemmel</p>
+                        </div>
 
-            <!-- sorular-->
-            <div class="rounded-card border border-line bg-white p-6 shadow-soft">
-                <h2 class="font-display text-xl font-bold text-navy">Sorular ve Cevaplar</h2>
+                        <div>
+                            <label class="mb-2 block text-xs font-bold uppercase tracking-wider text-muted">Yorumun</label>
+                            <textarea name="comment" rows="4" required maxlength="1000"
+                                  placeholder="Deneyimini anlat: rehber, konaklama, program akışı…"
+                                  class="w-full rounded-xl border border-line bg-cream/40 px-4 py-3 text-sm text-navy placeholder:text-muted/70 focus:border-teal focus:bg-white focus:outline-none"></textarea>
+                        </div>
 
-                @if (!Model.Questions.Any())
-                {
-                    <p class="mt-4 text-muted">Bu tur hakkında henüz soru sorulmamış.</p>
+                        <button type="submit"
+                                class="rounded-full bg-teal px-6 py-3 font-semibold text-white transition hover:bg-teal-dark">
+                            Değerlendirmeyi Gönder
+                        </button>
+                    </form>
                 }
                 else
                 {
-                    <div class="mt-5 divide-y divide-line border-t border-line">
-                        @foreach (var q in Model.Questions)
-                        {
-                            <div class="py-5">
-                                <div class="flex gap-3">
-                                    <span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-navy text-xs font-bold text-white">S</span>
-                                    <div class="min-w-0 flex-1">
-                                        <p class="font-semibold text-navy">@q.Text</p>
-                                        <p class="mt-0.5 text-xs text-muted">@q.MemberName · @q.CreatedDate.ToString("dd.MM.yyyy")</p>
-                                    </div>
-                                </div>
-
-                                @if (!string.IsNullOrWhiteSpace(q.Answer))
-                                {
-                                    <div class="mt-3 flex gap-3 pl-10">
-                                        <span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-teal text-xs font-bold text-white">C</span>
-                                        <div class="min-w-0 flex-1 rounded-xl bg-cream/60 px-4 py-3">
-                                            <p class="leading-relaxed text-muted">@q.Answer</p>
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-                        }
+                    <div class="rounded-xl bg-cream/60 px-5 py-4 text-sm">
+                        <span class="text-muted">Değerlendirme yazmak için</span>
+                        <a asp-controller="Auth" asp-action="Login" class="font-semibold text-teal-dark hover:underline">giriş yap</a>
+                        <span class="text-muted">ya da</span>
+                        <a asp-controller="Auth" asp-action="Register" class="font-semibold text-teal-dark hover:underline">üye ol</a>.
                     </div>
                 }
             </div>
+
+
+            <!-- soru formu -->
+            <div class="mt-8 border-t border-line pt-6">
+                @if (User.Identity!.IsAuthenticated)
+                {
+                    <h3 class="font-display text-lg font-bold text-navy">Bir Sorun mu Var?</h3>
+                    <p class="mt-1 text-sm text-muted">Ekibimiz yanıtlar, cevap bu sayfada görünür.</p>
+
+                    <form asp-action="AddQuestion" method="post" class="mt-5 space-y-4">
+                        <input type="hidden" name="seoUrl" value="@t.SeoUrl" />
+                        <input type="hidden" name="tourId" value="@t.Id" />
+
+                        <textarea name="text" rows="3" required maxlength="500"
+                              placeholder="Örneğin: Tekerlekli sandalye kullanıyorum, program uygun mu?"
+                              class="w-full rounded-xl border border-line bg-cream/40 px-4 py-3 text-sm text-navy placeholder:text-muted/70 focus:border-teal focus:bg-white focus:outline-none"></textarea>
+
+                        <button type="submit"
+                                class="rounded-full border border-navy px-6 py-3 font-semibold text-navy transition hover:bg-navy hover:text-white">
+                            Soruyu Gönder
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <div class="rounded-xl bg-cream/60 px-5 py-4 text-sm">
+                        <span class="text-muted">Soru sormak için</span>
+                        <a asp-controller="Auth" asp-action="Login" class="font-semibold text-teal-dark hover:underline">giriş yap</a>.
+                    </div>
+                }
+            </div>
+
         </div>
 
         <!--Sağ sütün: rezarvasyon -->

@@ -18,5 +18,8 @@
 
         public int AdultCount { get; set; }
         public int ChildCount { get; set; }
+
+        public List<Entities.SubDocuments.Guest> Guests { get; set; } = new(); //accordion card için düşündüm bunu
+
     }
 }

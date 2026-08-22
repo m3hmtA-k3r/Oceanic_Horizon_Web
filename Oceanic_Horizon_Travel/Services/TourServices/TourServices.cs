@@ -192,6 +192,33 @@ namespace Oceanic_Horizon_Travel.Services.TourServices
             return tour is null ? null : _mapper.Map<ResultTourDto>(tour);
         }
 
+        public async Task<List<ResultTourDto>> GetFeaturedAsync(int count) //ana sayfaya baglı 
+        {
+            var filter = Builders<Tour>.Filter.And(
+                Builders<Tour>.Filter.Eq(x => x.IsActive, true),
+                Builders<Tour>.Filter.Eq(x => x.IsFeatured, true)
+            );
+
+            var tours = await _tourCollection
+                .Find(filter)
+                .SortByDescending(x => x.Rating)
+                .Limit(count)
+                .ToListAsync();
+
+            // Öne çıkan yeterince yoksa aktif turlarla tamamla
+            if (tours.Count < count)
+            {
+                var extra = await _tourCollection
+                    .Find(x => x.IsActive && !x.IsFeatured)
+                    .SortByDescending(x => x.CreatedDate)
+                    .Limit(count - tours.Count)
+                    .ToListAsync();
+
+                tours.AddRange(extra);
+            }
+
+            return _mapper.Map<List<ResultTourDto>>(tours);
+        }
 
     }
 }
