@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Rezervasyon Alındı";
+    var bookingNumber = ViewBag.BookingNumber as string;
+}
+
+<div class="mx-auto max-w-2xl px-6 py-20">
+    <div class="rounded-card border border-line bg-white p-10 text-center shadow-soft">
+
+        <div class="mx-auto grid h-20 w-20 place-items-center rounded-full bg-teal/12 text-teal-dark">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12" />
+            </svg>
+        </div>
+
+        <h1 class="mt-6 font-display text-3xl font-bold text-navy">Rezervasyonun Alındı</h1>
+        <p class="mt-2 text-muted">
+            Talebin ekibimize ulaştı. Onaylandığında e-posta ile bilgilendirileceksin.
+        </p>
+
+        <div class="mt-8 rounded-xl bg-cream/60 px-6 py-5">
+            <p class="text-xs font-bold uppercase tracking-wider text-muted">Rezervasyon Numarası</p>
+            <p class="mt-1 font-mono text-xl font-bold text-navy">@bookingNumber</p>
+        </div>
+
+        <p class="mt-6 text-sm text-muted">
+            Bu numarayı saklamanı öneririz — rezervasyonunla ilgili her yazışmada işine yarayacak.
+        </p>
+
+        <div class="mt-8 flex flex-wrap justify-center gap-3">
+            <a asp-controller="Profile" asp-action="Index"
+               class="rounded-full bg-navy px-6 py-3 font-semibold text-white transition hover:bg-teal-dark">
+                Rezervasyonlarım
+            </a>
+            <a asp-controller="Tour" asp-action="Index"
+               class="rounded-full border border-line px-6 py-3 font-semibold text-navy transition hover:border-navy">
+                Turlara Dön
+            </a>
+        </div>
+    </div>
+</div>

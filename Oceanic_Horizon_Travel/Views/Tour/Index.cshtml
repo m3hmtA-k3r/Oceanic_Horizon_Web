@@ -1,0 +1,310 @@
+﻿@using System.Globalization
+@model Oceanic_Horizon_Travel.DTOs.TourDtos.TourListViewModel
+
+@{
+    ViewData["Title"] = "Turlar";
+    var culture = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+    var f = Model.Filter;
+
+    // Kart üzerinde destinasyon ve kategori adı göstermek için — ekstra sorgu yok
+    var destMap = Model.Destinations.ToDictionary(d => d.Id!, d => d.City.Get(culture));
+    var catMap = Model.Categories.ToDictionary(c => c.Id!, c => c.Name.Get(culture));
+
+    var priceRanges = new (string Label, decimal? Min, decimal? Max)[]
+    {
+        ("0 – 400",      null, 400),
+        ("400 – 700",    400,  700),
+        ("700 – 1.000",  700,  1000),
+        ("1.000+",       1000, null)
+    };
+
+    var durations = new (string Label, int? Min, int? Max)[]
+    {
+        ("1 – 3 gün",  1, 3),
+        ("4 – 6 gün",  4, 6),
+        ("7+ gün",     7, null)
+    };
+}
+
+<!-- ───────── BAŞLIK ───────── -->
+<section class="bg-navy py-16 text-white">
+    <div class="mx-auto max-w-7xl px-6">
+        <h1 class="font-display text-4xl font-extrabold tracking-tight sm:text-5xl">Hayalindeki Turu Bul</h1>
+        <p class="mt-3 max-w-2xl text-white/70">
+            Kültür rotalarından doğa kaçamaklarına, kısa şehir molalarından uzun yolculuklara.
+        </p>
+    </div>
+</section>
+
+<div class="mx-auto max-w-7xl px-6 py-12">
+    <div class="grid gap-8 lg:grid-cols-4">
+
+        <!--FİLTRE PANELİ -->
+        <aside class="lg:col-span-1">
+            <form asp-controller="Tour" asp-action="Index" method="get"
+                  class="sticky top-6 rounded-card border border-line bg-white p-6 shadow-soft">
+
+                <h2 class="font-display text-lg font-bold text-navy">Turları Filtrele</h2>
+                <p class="mt-1 text-xs text-muted">Sana en uygun rotayı bulmak için daralt.</p>
+
+                <!-- arama -->
+                <div class="mt-6">
+                    <label class="mb-2 block text-xs font-bold uppercase tracking-wider text-muted">Tur Ara</label>
+                    <input type="text" name="q" value="@f.Q" placeholder="Tur veya rota ara"
+                           class="w-full rounded-xl border border-line bg-cream/40 px-4 py-2.5 text-sm text-navy placeholder:text-muted/70 focus:border-teal focus:bg-white focus:outline-none" />
+                </div>
+
+                <!-- destinasyon -->
+                <div class="mt-6 border-t border-line pt-5">
+                    <p class="mb-3 text-xs font-bold uppercase tracking-wider text-muted">Destinasyon</p>
+                    <div class="space-y-2">
+                        <label class="flex cursor-pointer items-center gap-2.5 text-sm text-navy">
+                            <input type="radio" name="destinationId" value=""
+                                   checked="@string.IsNullOrEmpty(f.DestinationId)"
+                                   class="h-4 w-4 accent-teal" />
+                            Tümü
+                        </label>
+                        @foreach (var d in Model.Destinations)
+                        {
+                            <label class="flex cursor-pointer items-center gap-2.5 text-sm text-navy">
+                                <input type="radio" name="destinationId" value="@d.Id"
+                                       checked="@(f.DestinationId == d.Id)"
+                                       class="h-4 w-4 accent-teal" />
+                                @d.City.Get(culture)
+                            </label>
+                        }
+                    </div>
+                </div>
+
+                <!-- kategori -->
+                <div class="mt-6 border-t border-line pt-5">
+                    <p class="mb-3 text-xs font-bold uppercase tracking-wider text-muted">Tur Tipi</p>
+                    <div class="space-y-2">
+                        <label class="flex cursor-pointer items-center gap-2.5 text-sm text-navy">
+                            <input type="radio" name="categoryId" value=""
+                                   checked="@string.IsNullOrEmpty(f.CategoryId)"
+                                   class="h-4 w-4 accent-teal" />
+                            Tümü
+                        </label>
+                        @foreach (var c in Model.Categories)
+                        {
+                            <label class="flex cursor-pointer items-center gap-2.5 text-sm text-navy">
+                                <input type="radio" name="categoryId" value="@c.Id"
+                                       checked="@(f.CategoryId == c.Id)"
+                                       class="h-4 w-4 accent-teal" />
+                                @c.Name.Get(culture)
+                            </label>
+                        }
+                    </div>
+                </div>
+
+                <!-- fiyat -->
+                <div class="mt-6 border-t border-line pt-5">
+                    <p class="mb-3 text-xs font-bold uppercase tracking-wider text-muted">Fiyat Aralığı</p>
+                    <div class="space-y-2">
+                        @foreach (var r in priceRanges)
+                        {
+                            var isChecked = f.MinPrice == r.Min && f.MaxPrice == r.Max;
+                            <label class="flex cursor-pointer items-center gap-2.5 text-sm text-navy">
+                                <input type="radio" name="priceRange" value="@r.Min|@r.Max"
+                                       checked="@isChecked"
+                                       class="price-range h-4 w-4 accent-teal" />
+                                @r.Label
+                            </label>
+                        }
+                    </div>
+
+                    <input type="hidden" name="minPrice" id="minPrice" value="@f.MinPrice" />
+                    <input type="hidden" name="maxPrice" id="maxPrice" value="@f.MaxPrice" />
+                </div>
+
+                <!-- süre -->
+                <div class="mt-6 border-t border-line pt-5">
+                    <p class="mb-3 text-xs font-bold uppercase tracking-wider text-muted">Tur Süresi</p>
+                    <div class="space-y-2">
+                        @foreach (var d in durations)
+                        {
+                            var isChecked = f.MinDay == d.Min && f.MaxDay == d.Max;
+                            <label class="flex cursor-pointer items-center gap-2.5 text-sm text-navy">
+                                <input type="radio" name="dayRange" value="@d.Min|@d.Max"
+                                       checked="@isChecked"
+                                       class="day-range h-4 w-4 accent-teal" />
+                                @d.Label
+                            </label>
+                        }
+                    </div>
+
+                    <input type="hidden" name="minDay" id="minDay" value="@f.MinDay" />
+                    <input type="hidden" name="maxDay" id="maxDay" value="@f.MaxDay" />
+                </div>
+
+                <div class="mt-6 space-y-2 border-t border-line pt-5">
+                    <button type="submit"
+                            class="w-full rounded-full bg-teal px-6 py-3 font-semibold text-white transition hover:bg-teal-dark">
+                        Filtrele
+                    </button>
+                    <a asp-controller="Tour" asp-action="Index"
+                       class="block rounded-full border border-line px-6 py-3 text-center font-semibold text-muted transition hover:border-navy hover:text-navy">
+                        Temizle
+                    </a>
+                </div>
+            </form>
+        </aside>
+
+        <!-- SONUÇLAR  -->
+        <div class="lg:col-span-3">
+
+            <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h2 class="font-display text-2xl font-bold text-navy">Turlar</h2>
+                    <p class="text-sm text-muted">@Model.TotalCount tur bulundu</p>
+                </div>
+
+                <form asp-controller="Tour" asp-action="Index" method="get">
+                    <input type="hidden" name="q" value="@f.Q" />
+                    <input type="hidden" name="destinationId" value="@f.DestinationId" />
+                    <input type="hidden" name="categoryId" value="@f.CategoryId" />
+                    <input type="hidden" name="minPrice" value="@f.MinPrice" />
+                    <input type="hidden" name="maxPrice" value="@f.MaxPrice" />
+                    <input type="hidden" name="minDay" value="@f.MinDay" />
+                    <input type="hidden" name="maxDay" value="@f.MaxDay" />
+
+                    <select name="sort" onchange="this.form.submit()"
+                            class="rounded-full border border-line bg-white px-5 py-2.5 text-sm font-semibold text-navy focus:border-teal focus:outline-none">
+                        <option value="" selected="@string.IsNullOrEmpty(f.Sort)">Önerilen</option>
+                        <option value="price-asc" selected="@(f.Sort == "price-asc")">Fiyat: Artan</option>
+                        <option value="price-desc" selected="@(f.Sort == "price-desc")">Fiyat: Azalan</option>
+                        <option value="rating" selected="@(f.Sort == "rating")">Puana Göre</option>
+                    </select>
+                </form>
+            </div>
+
+            @if (!Model.Tours.Any())
+            {
+                <div class="rounded-card border border-line bg-white px-8 py-16 text-center shadow-soft">
+                    <div class="mx-auto mb-5 grid h-16 w-16 place-items-center rounded-2xl bg-teal/10 text-teal-dark">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-xl font-bold text-navy">Aradığın kriterlere uygun tur bulunamadı.</h3>
+                    <p class="mx-auto mt-2 max-w-sm text-muted">Filtreleri gevşetmeyi ya da farklı bir destinasyon seçmeyi dene.</p>
+                    <a asp-controller="Tour" asp-action="Index"
+                       class="mt-6 inline-block rounded-full bg-navy px-6 py-3 font-semibold text-white transition hover:bg-teal-dark">
+                        Filtreleri Temizle
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                    @foreach (var tour in Model.Tours)
+                    {
+                        <article class="group flex flex-col overflow-hidden rounded-card border border-line bg-white shadow-soft transition duration-300 hover:-translate-y-1.5 hover:shadow-lift">
+
+                            <div class="relative h-52 overflow-hidden">
+                                <img src="@tour.ThumbnailUrl" alt="@tour.Title.Get(culture)"
+                                     class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+
+                                @if (tour.Badges.Any())
+                                {
+                                    <span class="absolute left-3.5 top-3.5 rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-navy">
+                                        @tour.Badges.First()
+                                    </span>
+                                }
+                            </div>
+
+                            <div class="flex flex-1 flex-col p-5">
+
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-xs font-semibold text-teal-dark">
+                                        @destMap.GetValueOrDefault(tour.DestinationId ?? "", "—")
+                                    </span>
+                                    <span class="rounded-full border border-line bg-cream px-2.5 py-0.5 text-[0.7rem] text-muted">
+                                        @catMap.GetValueOrDefault(tour.CategoryId ?? "", "—")
+                                    </span>
+                                </div>
+
+                                <h3 class="mt-1.5 font-display text-lg font-bold leading-snug text-navy">
+                                    @tour.Title.Get(culture)
+                                </h3>
+
+                                <div class="mt-2 flex items-center gap-4 text-sm text-muted">
+                                    <span>@tour.Day gün · @tour.Night gece</span>
+
+                                    @if (tour.ReviewCount > 0)
+                                    {
+                                        <span class="font-semibold text-navy">
+                                            <span class="text-star">★</span> @tour.Rating.ToString("0.0")
+                                            <span class="text-xs font-normal text-muted">(@tour.ReviewCount)</span>
+                                        </span>
+                                    }
+                                </div>
+
+                                <div class="mt-auto flex items-end justify-between border-t border-line pt-4">
+                                    <div>
+                                        <small class="block text-xs text-muted">Kişi başı</small>
+                                        <b class="font-display text-xl text-navy">
+                                            @tour.BasePrice.ToString("N0")
+                                            <span class="text-sm font-semibold text-muted">@tour.CurrencyType</span>
+                                        </b>
+                                    </div>
+
+                                    <a asp-controller="Tour" asp-action="Detail" asp-route-id="@tour.SeoUrl"
+                                       class="rounded-full bg-navy px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-teal-dark">
+                                        İncele
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+                    }
+                </div>
+
+                <!-- sayfalama -->
+                @if (Model.TotalPages > 1)
+                {
+                    <div class="mt-10 flex justify-center gap-2">
+                        @for (int p = 1; p <= Model.TotalPages; p++)
+                        {
+                            var isCurrent = p == (f.Page < 1 ? 1 : f.Page);
+                            <a asp-controller="Tour" asp-action="Index"
+                               asp-route-q="@f.Q"
+                               asp-route-destinationId="@f.DestinationId"
+                               asp-route-categoryId="@f.CategoryId"
+                               asp-route-minPrice="@f.MinPrice"
+                               asp-route-maxPrice="@f.MaxPrice"
+                               asp-route-minDay="@f.MinDay"
+                               asp-route-maxDay="@f.MaxDay"
+                               asp-route-sort="@f.Sort"
+                               asp-route-page="@p"
+                               class="grid h-11 min-w-11 place-items-center rounded-xl border px-3 font-semibold transition @(isCurrent
+                                                                       ? "border-navy bg-navy text-white"
+                                                                       : "border-line bg-white text-navy hover:border-teal hover:text-teal-dark")">
+                    @p
+                </a>
+                                }
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Fiyat ve süre aralıkları tek radio ile seçiliyor, iki gizli alana ayrılıyor
+        function bindRange(radioClass, minId, maxId) {
+            document.querySelectorAll(radioClass).forEach(function (radio) {
+                radio.addEventListener('change', function () {
+                    const parts = this.value.split('|');
+                    document.getElementById(minId).value = parts[0] || '';
+                    document.getElementById(maxId).value = parts[1] || '';
+                });
+            });
+        }
+
+        bindRange('.price-range', 'minPrice', 'maxPrice');
+        bindRange('.day-range', 'minDay', 'maxDay');
+    </script>
+}

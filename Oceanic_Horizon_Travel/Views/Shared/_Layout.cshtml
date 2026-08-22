@@ -6,6 +6,9 @@
     var currentCulture = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
     var returnUrl = Context.Request.Path + Context.Request.QueryString;
 
+    var userName = User.Identity?.Name ?? "";
+    var userInitial = string.IsNullOrWhiteSpace(userName) ? "?" : userName[..1].ToUpper();
+
     var cultureNames = new Dictionary<string, string>
     {
         ["tr"] = "Türkçe",
@@ -22,7 +25,6 @@
     <meta name="description" content="Oceanic Horizon — özenle tasarlanmış turlarla unutulmaz seyahatler." />
 
     <title>@ViewData["Title"] - Oceanic Horizon</title>
-
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -45,8 +47,14 @@
 
                 <!-- Menü -->
                 <ul class="hidden items-center gap-1 lg:flex">
-                    <li><a href="/" class="px-3 py-2 font-medium text-navy transition hover:text-teal-dark">@L["Home"]</a></li>
-                    <li><a href="/#turlar" class="px-3 py-2 font-medium text-navy transition hover:text-teal-dark">@L["Tours"]</a></li>
+                    <li>
+                        <a asp-controller="Home" asp-action="Index"
+                           class="px-3 py-2 font-medium text-navy transition hover:text-teal-dark">@L["Home"]</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Tour" asp-action="Index"
+                           class="px-3 py-2 font-medium text-navy transition hover:text-teal-dark">@L["Tours"]</a>
+                    </li>
                     <li><a href="/#destinasyonlar" class="px-3 py-2 font-medium text-navy transition hover:text-teal-dark">@L["Destinations"]</a></li>
                     <li><a href="/#konaklama" class="px-3 py-2 font-medium text-navy transition hover:text-teal-dark">@L["Accommodation"]</a></li>
                     <li><a href="/#hakkimizda" class="px-3 py-2 font-medium text-navy transition hover:text-teal-dark">@L["About"]</a></li>
@@ -89,16 +97,16 @@
 
                             @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
                             {
-                                <a asp-area="Admin" asp-controller="Banner" asp-action="Index"
+                                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"
                                    class="hidden rounded-full border border-navy bg-navy px-4 py-2 text-sm font-semibold text-white transition hover:bg-navy-2 md:inline-block">
                                     @L["AdminPanel"]
                                 </a>
                             }
 
                             <span class="hidden items-center gap-2.5 rounded-full border border-line bg-white py-1.5 pl-4 pr-1.5 font-semibold text-navy sm:flex">
-                                @User.Identity.Name
+                                @userName
                                 <span class="grid h-8 w-8 place-items-center rounded-full bg-navy text-xs font-bold text-white">
-                                    @User.Identity.Name!.Substring(0, 1).ToUpper()
+                                    @userInitial
                                 </span>
                             </span>
 
@@ -162,7 +170,7 @@
                 <!-- Keşfet -->
                 <div>
                     <h6 class="mb-4 font-display font-semibold text-white">@L["Discover"]</h6>
-                    <a href="/#turlar" class="mb-2.5 block text-sm transition hover:text-teal-light">@L["Tours"]</a>
+                    <a asp-controller="Tour" asp-action="Index" class="mb-2.5 block text-sm transition hover:text-teal-light">@L["Tours"]</a>
                     <a href="/#destinasyonlar" class="mb-2.5 block text-sm transition hover:text-teal-light">@L["Destinations"]</a>
                     <a href="/#konaklama" class="mb-2.5 block text-sm transition hover:text-teal-light">@L["Accommodation"]</a>
                     <a href="/#yorumlar" class="mb-2.5 block text-sm transition hover:text-teal-light">@L["Reviews"]</a>

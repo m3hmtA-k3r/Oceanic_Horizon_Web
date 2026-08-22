@@ -17,6 +17,12 @@ namespace Oceanic_Horizon_Travel.Services.TourServices
 
         Task<List<ResultTourDto>> SearchAsync(string term);// başlıkta arama (üç dil)
 
+        Task<(List<ResultTourDto> Items, int TotalCount)> GetFilteredAsync(TourFilterDto filter);
+
+        Task<ResultTourDto?> GetBySeoUrlAsync(string seoUrl);
+
+        Task<ResultTourDto?> GetByTourDateIdAsync(string tourDateId); //Rezervasyon akışı
+
 
     }
 }
